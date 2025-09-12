@@ -1,102 +1,73 @@
-<svg width="100%" height="100%" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ff0055">
-        <animate attributeName="stop-color" values="#ff0055;#ff9900;#ffff00;#00ff99;#00ccff;#cc00ff;#ff0055" dur="7s" repeatCount="indefinite"/>
-      </stop>
-      <stop offset="100%" stop-color="#00ccff">
-        <animate attributeName="stop-color" values="#00ccff;#cc00ff;#ff0055;#ff9900;#ffff00;#00ff99;#00ccff" dur="7s" repeatCount="indefinite"/>
-      </stop>
-    </linearGradient>
-
-    <filter id="neon" x="-100%" y="-100%" width="300%" height="300%">
-      <feGaussianBlur stdDeviation="3" result="blur">
-         <animate attributeName="stdDeviation" values="3;5;3" dur="2s" repeatCount="indefinite" />
-      </feGaussianBlur>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="5" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
-    <filter id="glass" x="0" y="0" width="100%" height="100%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur"/>
-      <feBlend in="SourceGraphic" in2="blur" mode="normal"/>
-    </filter>
-    
-    <g id="cartoonBot">
-      <rect x="-10" y="0" width="20" height="20" rx="5" fill="url(#rainbow)" stroke="#fff" stroke-width="1.5"/>
-      <circle cx="0" cy="-7" r="6" fill="#0a0a0a" />
-      <circle cx="0" cy="-7" r="2" fill="url(#rainbow)" />
-    </g>
-
-    <g id="rainyStar">
-      <circle cx="0" cy="0" r="1" fill="url(#rainbow)" opacity="0">
-        <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0s" repeatCount="indefinite"/>
-        <animate attributeName="cy" from="-20" to="420" dur="5s" repeatCount="indefinite" />
-        <animateTransform attributeName="transform" type="translate" from="0 0" to="0 20" dur="0.5s" additive="sum" repeatCount="indefinite"/>
-      </circle>
-    </g>
-
-  </defs>
-
-  <rect width="100%" height="100%" fill="#0a0a0a"/>
-  <rect width="100%" height="100%" fill="url(#rainbow)" opacity="0.1">
-      <animate attributeName="opacity" values="0.1;0.2;0.1" dur="5s" repeatCount="indefinite" />
-  </rect>
-
-  <rect x="10" y="10" width="580" height="380" rx="20" stroke="url(#rainbow)" stroke-width="4" fill="transparent">
-    <animate attributeName="stroke-width" values="4;6;4" dur="2s" repeatCount="indefinite" />
-  </rect>
-
-  <rect x="50" y="40" width="500" height="320" rx="20" fill="#1118" stroke="#fff2" stroke-width="1.5" filter="url(#glass)"/>
-
-  <use href="#rainyStar" x="50" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.5s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="120" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="200" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1.5s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="280" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="350" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.8s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="430" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1.2s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="500" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.3s" repeatCount="indefinite"/></use>
-   <use href="#rainyStar" x="80" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="2s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="180" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="2.5s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="260" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="3s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="330" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="3.5s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="400" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="4s" repeatCount="indefinite"/></use>
-  <use href="#rainyStar" x="480" y="0"> <animate attributeName="opacity" values="0;1;0" dur="2s" begin="4.5s" repeatCount="indefinite"/></use>
-
-
-  <text x="50%" y="100" text-anchor="middle" font-size="40" font-family="Segoe UI, Verdana, sans-serif" fill="url(#rainbow)" filter="url(#neon)" style="letter-spacing: 2px;">
-    💻 QADEER AI 🤖
-  </text>
+<svg width="100%" height="100%" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">  
+  <defs>  
+    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">  
+      <stop offset="0%" stop-color="#ff0055"/>  
+      <stop offset="25%" stop-color="#ffcc00"/>  
+      <stop offset="50%" stop-color="#00ff99"/>  
+      <stop offset="75%" stop-color="#00ccff"/>  
+      <stop offset="100%" stop-color="#cc00ff"/>  
+    </linearGradient>  
+  </defs>  
   
-  <text x="50%" y="150" text-anchor="middle" font-size="20" font-family="Segoe UI, Verdana, sans-serif" fill="url(#rainbow)" filter="url(#neon)">
-    🛠️ CREATED BY QADEER KHAN 🦟
-  </text>
-
-  <g transform="translate(250, 190)" filter="url(#neon)">
-    <rect x="0" y="0" width="100" height="100" rx="10" stroke="url(#rainbow)" stroke-width="3" fill="#1115"/>
-    <text x="50" y="58" text-anchor="middle" font-size="28" font-family="monospace" fill="#fff">AI</text>
-    <line x1="20" y1="0" x2="20" y2="100" stroke="url(#rainbow)" stroke-width="2"/>
-    <line x1="80" y1="0" x2="80" y2="100" stroke="url(#rainbow)" stroke-width="2"/>
-    <line x1="0" y1="20" x2="100" y2="20" stroke="url(#rainbow)" stroke-width="2"/>
-    <line x1="0" y1="80" x2="100" y2="80" stroke="url(#rainbow)" stroke-width="2"/>
-  </g>
-
-  <use href="#cartoonBot" filter="url(#glow)">
-      <animateMotion 
-        path="M100,300 C150,200 250,200 300,250 C350,300 450,300 500,220 C450,150 350,150 300,200 C250,250 150,250 100,300 Z" 
-        dur="12s" 
-        repeatCount="indefinite" 
-        rotate="auto"
-        />
-  </use>
+  <!-- Dark background -->  
+  <rect width="100%" height="100%" fill="#0a0a0a"/>  
+  
+  <!-- Moving rainbow dots -->  
+  <circle cx="100" cy="100" r="4" fill="url(#rainbow)">  
+    <animate attributeName="cy" values="100;380;100" dur="6s" repeatCount="indefinite"/>  
+    <animate attributeName="cx" values="100;500;100" dur="12s" repeatCount="indefinite"/>  
+  </circle>  
+  <circle cx="400" cy="200" r="3" fill="url(#rainbow)">  
+    <animate attributeName="cy" values="200;50;200" dur="8s" repeatCount="indefinite"/>  
+    <animate attributeName="cx" values="400;100;400" dur="10s" repeatCount="indefinite"/>  
+  </circle>  
+  <circle cx="250" cy="300" r="5" fill="url(#rainbow)">  
+    <animate attributeName="cy" values="300;80;300" dur="7s" repeatCount="indefinite"/>  
+    <animate attributeName="cx" values="250;550;250" dur="9s" repeatCount="indefinite"/>  
+  </circle>  
+  <circle cx="500" cy="120" r="4" fill="url(#rainbow)">  
+    <animate attributeName="cy" values="120;350;120" dur="11s" repeatCount="indefinite"/>  
+    <animate attributeName="cx" values="500;200;500" dur="13s" repeatCount="indefinite"/>  
+  </circle>  
+  
+  <!-- Outer rainbow border -->  
+  <rect x="10" y="10" width="580" height="380" rx="20" stroke="url(#rainbow)" stroke-width="4" fill="transparent">  
+    <animate attributeName="stroke-dasharray" values="20,10;50,5;10,20;20,10" dur="4s" repeatCount="indefinite"/>  
+  </rect>  
+  
+  <!-- Inner rainbow border -->  
+  <rect x="16" y="16" width="568" height="368" rx="18" stroke="url(#rainbow)" stroke-width="3" fill="transparent">  
+    <animate attributeName="stroke-dasharray" values="10,5;30,10;5,15;10,5" dur="4s" repeatCount="indefinite"/>  
+  </rect>  
+  
+  <!-- Glass box background -->  
+  <rect x="50" y="40" width="500" height="320" rx="20" fill="#1118" stroke="#fff2" stroke-width="1.5"/>  
+  
+  <!-- Title text -->  
+  <text x="50%" y="90" text-anchor="middle" font-size="42" font-family="Segoe UI, Verdana, sans-serif" fill="url(#rainbow)">  
+    𓅓 QADEER-AI 𓅓  
+    <animateTransform attributeName="transform" type="scale" values="1;1.03;1" dur="3s" repeatCount="indefinite"/>  
+  </text>  
+  
+  <!-- Center BOX with AI -->  
+  <rect x="250" y="160" width="100" height="80" rx="12" stroke="url(#rainbow)" stroke-width="3" fill="none">  
+    <animate attributeName="stroke-dasharray" values="8,4;20,6;4,10;8,4" dur="3s" repeatCount="indefinite"/>  
+    <animateTransform attributeName="transform" type="rotate" from="0 300 200" to="360 300 200" dur="12s" repeatCount="indefinite"/>  
+  </rect>  
+  
+  <!-- Glow effect around AI box -->  
+  <rect x="248" y="158" width="104" height="84" rx="14" stroke="url(#rainbow)" stroke-width="2" fill="none" opacity="0.5">  
+    <animate attributeName="opacity" values="0.2;0.9;0.2" dur="3s" repeatCount="indefinite"/>  
+  </rect>  
+  
+  <!-- Center text AI -->  
+  <text x="300" y="215" text-anchor="middle" font-size="52" font-weight="bold" font-family="Segoe UI, Verdana, sans-serif" fill="url(#rainbow)">  
+    AI  
+    <animate attributeName="opacity" values="1;0.3;1" dur="4s" repeatCount="indefinite"/>  
+  </text>  
+  
+  <!-- Footer text -->  
+  <text x="50%" y="360" text-anchor="middle" font-size="20" font-family="Segoe UI, Verdana, sans-serif" fill="url(#rainbow)">  
+    ✦ Designed & Created by Qadeer ✦  
+  </text>  
 </svg>
