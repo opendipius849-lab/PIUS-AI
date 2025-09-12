@@ -41,17 +41,17 @@ ___
     <tr>
       <td align="left" style="padding:10px; background:#2a2a3d; border-radius:8px; color:white;">⭐ Stars</td>
       <td align="right" style="padding:10px; background:#2a2a3d; border-radius:8px;">
-        <img src="https://img.shields.io/github/stars/Qadeer-Xtech/QADEER-AI?color=9D00FF&label=&style=flat-square">
+        <img src="https://img.shields.io/github/repo-stars/Qadeer-Xtech/QADEER-AI?color=9D00FF&label=&style=flat-square">
       </td>
     </tr>
     <tr>
       <td align="left" style="padding:10px; background:#2a2a3d; border-radius:8px; color:white;">🍴 Forks</td>
       <td align="right" style="padding:10px; background:#2a2a3d; border-radius:8px;">
-        <img src="https://img.shields.io/github/forks/Qadeer-Xtech/QADEER-AI?color=9D00FF&label=&style=flat-square">
+        <img src="https://img.shields.io/github/repo-forks/Qadeer-Xtech/QADEER-AI?color=9D00FF&label=&style=flat-square">
       </td>
     </tr>
   </table>
-                                                                                                              </div>
+                                                                                     </div>
 
 
 <p align='center'>
