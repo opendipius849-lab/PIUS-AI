@@ -74,3 +74,23 @@ ___
   </a>
 </p>
 
+
+
+
+<h2 align="center">🔗 Essential Links</h2>
+___
+<p align="center"><b>Official Channel</b></p>
+<p align="center">
+  <a href="https://whatsapp.com/channel/0029VajWxSZ96H4SyQLurV1H">
+    <img src="./Qadeer/join-channel-btn.svg" alt="Join Channel"/>
+  </a>
+</p>
+
+<p align="center"><b>Developer Contact</b></p>
+<p align="center">
+  <a href="https://api.whatsapp.com/send?phone=923151105391">
+    <img src="./Qadeer/contact-developer-btn.svg" alt="Contact Developer"/>
+  </a>
+</p>
+
+___
