@@ -59,6 +59,17 @@ ___
 <img src="https://i.imgur.com/dBaSKWF.gif" height="100" width="100%">
 
 
+  
+<h1 align="center">Fork This Project</h1>
+
+<p align="center">
+  <a href="https://github.com/Qadeer-Xtech/QADEER-AI/fork">
+    <img src="./Qadeer/fork-btn.svg" alt="Fork Repository"/>
+  </a>
+</p>
+
+
+<h1 align="center"> 𝐆𝐞𝐭 𝐒𝐞𝐬𝐬𝐢𝐨𝐧 </h1>
 
 <p align="center">
   <a href="https://base64-lite-55aa246d37d8.herokuapp.com/">
@@ -66,7 +77,7 @@ ___
   </a>
 </p>
 
-
+<h1 align="center"> 𝐃𝐄𝐏𝐋𝐎𝐘 </h1>
 
 <p align="center">
   <a href="https://dashboard.heroku.com/new?template=https://github.com/Qadeer-Xtech/QADEER-AI/tree/main">
@@ -77,20 +88,22 @@ ___
 
 
 
-<h2 align="center">🔗 Essential Links</h2>
-___
-<p align="center"><b>Official Channel</b></p>
+<h1 align="center"> 𝐒𝐔𝐏𝐏𝐎𝐑𝐓 </h1>
+
+
 <p align="center">
   <a href="https://whatsapp.com/channel/0029VajWxSZ96H4SyQLurV1H">
     <img src="./Qadeer/join-channel-btn.svg" alt="Join Channel"/>
   </a>
 </p>
 
-<p align="center"><b>Developer Contact</b></p>
+
 <p align="center">
   <a href="https://api.whatsapp.com/send?phone=923151105391">
     <img src="./Qadeer/contact-developer-btn.svg" alt="Contact Developer"/>
   </a>
 </p>
 
-___
+<p align='center'>
+    </p>
+<img src="https://i.imgur.com/dBaSKWF.gif" height="100" width="100%">
