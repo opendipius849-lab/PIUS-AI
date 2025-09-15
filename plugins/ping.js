@@ -15,52 +15,37 @@ cmd({
 },
 async (conn, mek, m, { from, sender, reply }) => {
     try {
-        const start = Date.now();
-        const reactionEmoji = "🚀"; // ہم نے یہاں ایک مخصوص راکٹ ایموجی سیٹ کر دی ہے۔
-        const rocketEmoji = "🚀"; // راکٹ ایموجی
-        const globeEmoji = "🌍"; // گلوب ایموجی
+        const rocketEmoji = "🚀";
+        const globeEmoji = "🌐";
+        const filledCircle = "⚫";
+        const emptyCircle = "⚪";
+        const barLength = 10;
 
-        await conn.sendMessage(from, {
-            react: { text: reactionEmoji, key: mek.key }
-        });
+        // ایک نیا میسج بھیجیں جو پراگریس بار کے طور پر اپ ڈیٹ ہو گا
+        const loadingMessage = await conn.sendMessage(from, { text: `${rocketEmoji} Launching... [${globeEmoji}${filledCircle}${emptyCircle.repeat(barLength - 1)}] 10%` });
 
-        // یہاں ہم ایک میسج بھیجتے ہیں جو پراگریس بار کے طور پر اپ ڈیٹ ہو گا۔
-        const loadingMessage = await conn.sendMessage(from, { text: `${rocketEmoji} Launching... [${globeEmoji}▬▬▬▬▬] 10%` });
-
-        // پراگریس بار کو 10% سے 100% تک لے جانے کے لیے ایک لوپ
+        // پراگریس بار کو 20% سے 100% تک لے جانے کے لیے لوپ
         for (let i = 20; i <= 100; i += 10) {
             const progress = i / 10;
-            const filled = '█'.repeat(progress); // filled bar
-            const empty = '░'.repeat(10 - progress); // empty bar
-            const progressText = `${rocketEmoji} Launching... [${globeEmoji}${filled}${empty}] ${i}%`;
-
-            // میسج کو اپ ڈیٹ کریں
+            const filledBar = filledCircle.repeat(progress);
+            const emptyBar = emptyCircle.repeat(barLength - progress);
+            
+            const progressText = `${rocketEmoji} Launching... [${globeEmoji}${filledBar}${emptyBar}] ${i}%`;
+            
             await conn.sendMessage(from, { text: progressText, edit: loadingMessage.key });
-            await sleep(500); // 500 ملی سیکنڈ کا انتظار کریں تاکہ اپ ڈیٹ واضح ہو
+            await sleep(500); // 500 ملی سیکنڈ کا انتظار تاکہ اپ ڈیٹ واضح ہو
         }
 
-        const end = Date.now();
-        const ping = end - start;
-
-        // فائنل رزلٹ بھیجیں
-        const resultMessage = `*${rocketEmoji} 🚀Rocket Arrived🚀!*
+        // 100% پر پہنچنے کے بعد پنگ کا حساب شروع کریں
+        const start = Date.now();
+        
+        // فائنل رزلٹ اسی میسج میں اپ ڈیٹ کریں
+        const finalMessage = `*${rocketEmoji} Rocket Arrived!*
 *${globeEmoji} Pong!*
-*📟 Response Speed: ${ping} ms*
-*⚡ 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽*`;
+*📟 Response Speed: ${Date.now() - start} ms*
+*⚡ POWERED BY QADEER KHAN*`;
 
-        await conn.sendMessage(from, {
-            text: resultMessage,
-            contextInfo: {
-                mentionedJid: [sender],
-                forwardingScore: 999,
-                isForwarded: false,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363345872435489@newsletter',
-                    newsletterName: "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈",
-                    serverMessageId: 143
-                }
-            }
-        }, { quoted: loadingMessage });
+        await conn.sendMessage(from, { text: finalMessage, edit: loadingMessage.key });
 
     } catch (e) {
         console.error("Ping error:", e);
