@@ -15,29 +15,29 @@ cmd({
 },
 async (conn, mek, m, { from, sender, reply }) => {
     try {
-        const start = Date.now();
         const rocketEmoji = "🚀";
         const globeEmoji = "🌐";
-        const filledCircle = "⚫";
-        const emptyCircle = "⚪";
+        const barChar = "─";
         const barLength = 10;
         
         await conn.sendMessage(from, {
             react: { text: "🚀", key: mek.key }
         });
 
-        const loadingMessage = await conn.sendMessage(from, { text: `${rocketEmoji} Launching... [${globeEmoji}${filledCircle}${emptyCircle.repeat(barLength - 1)}] 10%` });
+        const loadingMessage = await conn.sendMessage(from, { text: `${rocketEmoji} Launching... [${globeEmoji}${barChar.repeat(barLength - 1)}] 10%` });
 
         for (let i = 20; i <= 100; i += 10) {
             const progress = i / 10;
-            const filledBar = filledCircle.repeat(progress);
-            const emptyBar = emptyCircle.repeat(barLength - progress);
+            const filledBar = barChar.repeat(progress - 1);
+            const emptyBar = barChar.repeat(barLength - progress);
             
-            const progressText = `${rocketEmoji} Launching... [${globeEmoji}${filledBar}${emptyBar}] ${i}%`;
+            const progressText = `${rocketEmoji} Launching... [${filledBar}${rocketEmoji}${emptyBar}] ${i}%`;
             
             await conn.sendMessage(from, { text: progressText, edit: loadingMessage.key });
             await sleep(500); 
         }
+
+        const start = Date.now();
         
         const finalMessage = `*${rocketEmoji} Rocket Arrived!*
 *${globeEmoji} Pong!*
