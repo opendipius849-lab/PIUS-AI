@@ -1,8 +1,8 @@
 {
-  "name": "QADEER-AI",
-  "description": "Simple WhatsApp bot made by Qadeer Khan",
+  "name": "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈",
+  "description": "𝐒𝐢𝐦𝐩𝐥𝐞 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 𝐐𝐚𝐝𝐞𝐞𝐫 𝐊𝐡𝐚𝐧",
   "logo": "https://qu.ax/Pusls.jpg",
-  "keywords": ["QADEER-AI"],
+  "keywords": ["𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈"],
   "success_url": "/",
 
     "stack": "container",
@@ -16,7 +16,7 @@
     "STICKER_NAME": {
       "description": "type your sticker pack name.",
       "required": false,
-      "value": "QADEER-AI"
+      "value": "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈"
     }, 
       
     "PREFIX": {
@@ -37,7 +37,7 @@
       "required": false,
       "value": "true"  
     },
-              
+    
     "ALWAYS_ONLINE": {
       "description": "Make it true if want always online.",
       "required": false,
@@ -65,27 +65,27 @@
 
     "AUTO_STATUS_REACT": {
       "description": "make it true for automatic status reaction or like.",
-      "required": false,
-      "value": "false"
+      "required": true,
+      "value": "true"
     }, 
 
     "AUTO_STATUS_REPLY": {
       "description": "Make it true for auto reply msg on status seen.",
-      "required": false,
+      "required": true,
       "value": "false"
     }, 
 
     "AUTO_STATUS_MSG": {
       "description": "Type custom message on status reply",
-      "required": false,
-      "value": "*SEEN YOUR STATUS BY QADEER-AI 🥶*"
+      "required": true,
+      "value": "*SEEN YOUR STATUS BY 𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈 🤖*"
    
      }, 
     
     "OWNER_NAME": {
       "description": "Type Bot Owner Name.",
       "required": false,
-      "value": "*Qadeer Khan*"
+      "value": "𝐐𝐀𝐃𝐄𝐄𝐑-𝐊𝐇𝐀𝐍"
 }, 
 
     "OWNER_NUMBER": {
@@ -98,14 +98,14 @@
     "BOT_NAME": {
       "description": "Type here the bot name.",
       "required": false,
-      "value": "QADEER-AI"
+      "value": "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈"
 
       }, 
 
     "ANTI_LINK": {
       "description": "Make it true if you want bot auto remove group link.",
       "required": true,
-      "value": "false"
+      "value": "true"
       
     },
 
@@ -119,7 +119,7 @@
     "ANTI_BAD": {
       "description": "Make it true if you want bot auto delete bad words.",
       "required": false,
-      "value": "true"
+      "value": "false"
     },
 
    "MENTION_REPLY": {
@@ -137,7 +137,7 @@
      "DESCRIPTION": {
       "description": "add caption for menu and other",
       "required": false,
-      "value": "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ǫᴀᴅᴇᴇʀ ᴋʜᴀɴ*"
+      "value": "*CREATER 𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈*"
     },
 
       "DELETE_LINKS": {
@@ -192,7 +192,7 @@
     "WELCOME": {
       "description": "make it true if want goodbye and welcome message in groups.",
       "required": false,
-      "value": "true"
+      "value": "false"
     },
 
     "READ_MESSAGE": {
