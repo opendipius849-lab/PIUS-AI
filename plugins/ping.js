@@ -23,6 +23,12 @@ async (conn, mek, m, { from, sender, reply }) => {
             react: { text: "🚀", key: mek.key }
         });
 
+        // "AI ✨" label ke liye secret key
+        const messageSecret = Buffer.from(
+            '25d70a312a97943425b7a7a28399d32427b1419404214a486289b524793833d3',
+            'hex'
+        );
+        
         // WhatsApp Verified (Blue Tick) wala reply object
         const verifiedReply = {
             key: {
@@ -32,10 +38,9 @@ async (conn, mek, m, { from, sender, reply }) => {
             },
             message: {
                 extendedTextMessage: {
-                    text: "Qadeer-AI Official Status",
+                    text: "Qadeer-AI Official",
                     contextInfo: {
                         mentionedJid: [],
-                        // Yeh line blue tick add karti hai
                         verifiedBizName: "Qadeer-AI"
                     }
                 }
@@ -44,7 +49,7 @@ async (conn, mek, m, { from, sender, reply }) => {
 
         // Message bhejnay se pehle time note karein
         const end = Date.now();
-        const ping = end - start; // Total time calculate karein
+        const ping = end - start;
 
         // Message ke liye waqt aur tareekh hasil karein
         const now = new Date();
@@ -61,9 +66,10 @@ async (conn, mek, m, { from, sender, reply }) => {
 
 *╰─┈➤ POWERED BY QADEER KHAN*`;
 
-        // Final message ko naye verified reply ke sath bhej dein
+        // Final message ko naye features ke sath bhej dein
         await conn.sendMessage(from, {
             text: finalMessage,
+            messageSecret: messageSecret, // Yeh line "AI ✨" label add karti hai
             contextInfo: {
                 mentionedJid: [sender],
                 forwardingScore: 999,
@@ -74,7 +80,7 @@ async (conn, mek, m, { from, sender, reply }) => {
                     serverMessageId: 143
                 }
             }
-        }, { quoted: verifiedReply }); // Yahan 'mek' ki jagah naya reply object istemal kiya gaya hai
+        }, { quoted: verifiedReply });
 
     } catch (e) {
         console.error("Ping error:", e);
