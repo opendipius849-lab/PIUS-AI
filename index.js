@@ -120,7 +120,30 @@ const port = process.env.PORT || 9090;
   console.log('Plugins installed successful ✅')
   console.log('Bot connected to whatsapp ✅')
   
-  let up = `*Hello there QADEER-AI User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet QADEER-AI WhatsApp Bot.\n\n *Thanks for using QADEER-AI \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps://whatsapp.com/channel/0029VajWxSZ96H4SyQLurV1H \n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/Qadeer-Xtech/QADEER-AI\n\n> © 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽 ❣️ \ud83d\udda4`;
+    // YAHAN NAYA DESIGN ADD KIYA GAYA HAI
+    let up = `
+*✦━━━━━━━━━━━━━━━✦*
+   🤖  *QADEER-AI CONNECTED*  
+*✦━━━━━━━━━━━━━━━✦*
+
+╭───〔 【 🛡️ *BOT DETAILS* 】 〕
+│ 👤 *Creator:* Qadeer Khan
+│ 🪀 *Prefix:* ➥ ${config.PREFIX}
+│ ♻️ *Mode:* [${config.MODE}]
+│ 📦 *Repo:*  
+│   https://github.com/Qadeer-Xtech/QADEER-AI
+╰──────────────────────────╯
+
+╭───〔 【 🌐 *STAY CONNECTED* 】 〕
+│ 📢 *Channel:*  
+│   https://whatsapp.com/channel/0029VajWxSZ96H4SyQLurV1H
+│ 💻 *GitHub:*  
+│   https://github.com/Qadeer-Xtech/QADEER-AI
+╰──────────────────────────╯
+
+> *✨ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ǫᴀᴅᴇᴇʀ ᴋʜᴀɴ ✨*
+`;
+
     conn.sendMessage(conn.user.id, { image: { url: `https://qu.ax/Pusls.jpg` }, caption: up })
   }
   })
@@ -333,7 +356,8 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
   mek.type === "stickerMessage"
   ) {
   command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
-  }});
+  }
+  });
   
   });
     //===================================================   
