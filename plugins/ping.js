@@ -23,6 +23,25 @@ async (conn, mek, m, { from, sender, reply }) => {
             react: { text: "🚀", key: mek.key }
         });
 
+        // WhatsApp Verified (Blue Tick) wala reply object
+        const verifiedReply = {
+            key: {
+                participant: `0@s.whatsapp.net`,
+                fromMe: false,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                extendedTextMessage: {
+                    text: "Qadeer-AI Official Status",
+                    contextInfo: {
+                        mentionedJid: [],
+                        // Yeh line blue tick add karti hai
+                        verifiedBizName: "Qadeer-AI"
+                    }
+                }
+            }
+        };
+
         // Message bhejnay se pehle time note karein
         const end = Date.now();
         const ping = end - start; // Total time calculate karein
@@ -42,8 +61,20 @@ async (conn, mek, m, { from, sender, reply }) => {
 
 *╰─┈➤ POWERED BY QADEER KHAN*`;
 
-        // Final message ko original command ke reply mein bhej dein
-        await conn.sendMessage(from, { text: finalMessage }, { quoted: mek });
+        // Final message ko naye verified reply ke sath bhej dein
+        await conn.sendMessage(from, {
+            text: finalMessage,
+            contextInfo: {
+                mentionedJid: [sender],
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363345872435489@newsletter',
+                    newsletterName: "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈",
+                    serverMessageId: 143
+                }
+            }
+        }, { quoted: verifiedReply }); // Yahan 'mek' ki jagah naya reply object istemal kiya gaya hai
 
     } catch (e) {
         console.error("Ping error:", e);
