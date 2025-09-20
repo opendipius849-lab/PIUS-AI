@@ -1,102 +1,105 @@
-const config = require('../config');
-const { cmd } = require('../command');
-const DY_SCRAP = require('@dark-yasiya/scrap');
-const dy_scrap = new DY_SCRAP();
-
-function replaceYouTubeID(url) {
-    const regex = /(?:youtube\.com\/(?:.*v=|.*\/)|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-}
-
+const {
+  cmd
+} = require("../command");
+const fetch = require("node-fetch");
+const yts = require("yt-search");
 cmd({
-    pattern: "yplay3",
-    alias: ["ymp3", "ytmp3"],
-    react: "🎵",
-    desc: "Download Ytmp3",
-    category: "download",
-    use: ".song <Text or YT URL>",
-    filename: __filename
-}, async (conn, m, mek, { from, q, reply }) => {
-    try {
-        if (!q) return await reply("❌ Please provide a Query or Youtube URL!");
-
-        let id = q.startsWith("https://") ? replaceYouTubeID(q) : null;
-
-        if (!id) {
-            const searchResults = await dy_scrap.ytsearch(q);
-            if (!searchResults?.results?.length) return await reply("❌ No results found!");
-            id = searchResults.results[0].videoId;
-        }
-
-        const data = await dy_scrap.ytsearch(`https://youtube.com/watch?v=${id}`);
-        if (!data?.results?.length) return await reply("❌ Failed to fetch video!");
-
-        const { url, title, image, timestamp, ago, views, author } = data.results[0];
-
-        let info = `🍄 *𝚂𝙾𝙽𝙶 𝙳𝙾𝚆𝙽𝙻𝙾𝙰𝙳𝙴𝚁* 🍄\n\n` +
-            `🎵 *Title:* ${title || "Unknown"}\n` +
-            `⏳ *Duration:* ${timestamp || "Unknown"}\n` +
-            `👀 *Views:* ${views || "Unknown"}\n` +
-            `🌏 *Release Ago:* ${ago || "Unknown"}\n` +
-            `👤 *Author:* ${author?.name || "Unknown"}\n` +
-            `🖇 *Url:* ${url || "Unknown"}\n\n` +
-            `🔽 *Reply with your choice:*\n` +
-            `1.1 *Audio Type* 🎵\n` +
-            `1.2 *Document Type* 📁\n\n` +
-            `${config.FOOTER || "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈 🤖"}`;
-
-        const sentMsg = await conn.sendMessage(from, { image: { url: image }, caption: info }, { quoted: mek });
-        const messageID = sentMsg.key.id;
-        await conn.sendMessage(from, { react: { text: '🎶', key: sentMsg.key } });
-
-        // Listen for user reply only once!
-        conn.ev.on('messages.upsert', async (messageUpdate) => { 
-            try {
-                const mekInfo = messageUpdate?.messages[0];
-                if (!mekInfo?.message) return;
-
-                const messageType = mekInfo?.message?.conversation || mekInfo?.message?.extendedTextMessage?.text;
-                const isReplyToSentMsg = mekInfo?.message?.extendedTextMessage?.contextInfo?.stanzaId === messageID;
-
-                if (!isReplyToSentMsg) return;
-
-                let userReply = messageType.trim();
-                let msg;
-                let type;
-                let response;
-                
-                if (userReply === "1.1") {
-                    msg = await conn.sendMessage(from, { text: "⏳ Processing..." }, { quoted: mek });
-                    response = await dy_scrap.ytmp3(`https://youtube.com/watch?v=${id}`);
-                    let downloadUrl = response?.result?.download?.url;
-                    if (!downloadUrl) return await reply("❌ Download link not found!");
-                    type = { audio: { url: downloadUrl }, mimetype: "audio/mpeg" };
-                    
-                } else if (userReply === "1.2") {
-                    msg = await conn.sendMessage(from, { text: "⏳ Processing..." }, { quoted: mek });
-                    const response = await dy_scrap.ytmp3(`https://youtube.com/watch?v=${id}`);
-                    let downloadUrl = response?.result?.download?.url;
-                    if (!downloadUrl) return await reply("❌ Download link not found!");
-                    type = { document: { url: downloadUrl }, fileName: `${title}.mp3`, mimetype: "audio/mpeg", caption: title };
-                    
-                } else { 
-                    return await reply("❌ Invalid choice! Reply with 1.1 or 1.2.");
-                }
-
-                await conn.sendMessage(from, type, { quoted: mek });
-                await conn.sendMessage(from, { text: '✅ Media Upload Successful ✅', edit: msg.key });
-
-            } catch (error) {
-                console.error(error);
-                await reply(`❌ *An error occurred while processing:* ${error.message || "Error!"}`);
-            }
-        });
-
-    } catch (error) {
-        console.error(error);
-        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-        await reply(`❌ *An error occurred:* ${error.message || "Error!"}`);
+  'pattern': "play",
+  'alias': ['song', "mp3"],
+  'desc': "Download YouTube Audio",
+  'category': 'downloader',
+  'react': '💖',
+  'filename': __filename
+}, async (_0x54d9ac, _0x5aa73c, _0x3dc390, {
+  from: _0x1d9214,
+  q: _0x4b1135,
+  reply: _0x13cbf0
+}) => {
+  try {
+    if (!_0x4b1135) {
+      return _0x13cbf0("Please provide a YouTube link or search query.\n\nExample: .play madine wale");
     }
+    let _0x2d6fc6;
+    if (_0x4b1135.includes('youtube.com') || _0x4b1135.includes("youtu.be")) {
+      _0x2d6fc6 = _0x4b1135;
+    } else {
+      let _0x450784 = await yts(_0x4b1135);
+      if (!_0x450784 || !_0x450784.videos || _0x450784.videos.length === 0x0) {
+        return _0x13cbf0("No results found.");
+      }
+      _0x2d6fc6 = _0x450784.videos[0x0].url;
+    }
+    let _0x2dbca0 = await fetch('https://gtech-api-xtp1.onrender.com/api/audio/yt?apikey=APIKEY&url=' + encodeURIComponent(_0x2d6fc6));
+    let _0x2cc18f = await _0x2dbca0.json();
+    if (!_0x2cc18f.status) {
+      return _0x13cbf0("Failed to fetch audio.");
+    }
+    let {
+      audio_url: _0x5a3e99
+    } = _0x2cc18f.result.media;
+    await _0x54d9ac.sendMessage(_0x1d9214, {
+      'audio': {
+        'url': _0x5a3e99
+      },
+      'mimetype': "audio/mpeg",
+      'ptt': false
+    }, {
+      'quoted': _0x5aa73c
+    });
+  } catch (_0xf5f4cc) {
+    _0x13cbf0("âŒ Error while fetching audio.");
+    console.log(_0xf5f4cc);
+  }
 });
-                               
+cmd({
+  'pattern': 'video',
+  'alias': ["vid", "ytv"],
+  'desc': "Download YouTube Video",
+  'category': 'downloader',
+  'react': '🪄',
+  'filename': __filename
+}, async (_0x291138, _0x40711d, _0x320efe, {
+  from: _0x3764b7,
+  q: _0x247990,
+  reply: _0x5286ec
+}) => {
+  try {
+    if (!_0x247990) {
+      return _0x5286ec("Please provide a YouTube link or search query.\n\nExample: .video Pasoori");
+    }
+    let _0x3460a4;
+    if (_0x247990.includes("youtube.com") || _0x247990.includes('youtu.be')) {
+      _0x3460a4 = _0x247990;
+    } else {
+      let _0x145978 = await yts(_0x247990);
+      if (!_0x145978 || !_0x145978.videos || _0x145978.videos.length === 0x0) {
+        return _0x5286ec("No results found.");
+      }
+      _0x3460a4 = _0x145978.videos[0x0].url;
+    }
+    let _0x32732f = await fetch("https://gtech-api-xtp1.onrender.com/api/video/yt?apikey=APIKEY&url=" + encodeURIComponent(_0x3460a4));
+    let _0x207ba6 = await _0x32732f.json();
+    if (!_0x207ba6.status) {
+      return _0x5286ec("Failed to fetch video.");
+    }
+    let {
+      video_url_hd: _0x2500e4,
+      video_url_sd: _0x1f2e71
+    } = _0x207ba6.result.media;
+    let _0x5f2691 = _0x2500e4 !== "No HD video URL available" ? _0x2500e4 : _0x1f2e71;
+    if (!_0x5f2691 || _0x5f2691.includes('No')) {
+      return _0x5286ec("No downloadable video found.");
+    }
+    await _0x291138.sendMessage(_0x3764b7, {
+      'video': {
+        'url': _0x5f2691
+      },
+      'caption': "𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽"
+    }, {
+      'quoted': _0x40711d
+    });
+  } catch (_0x4a5abf) {
+    _0x5286ec("Error while fetching video.");
+    console.log(_0x4a5abf);
+  }
+});

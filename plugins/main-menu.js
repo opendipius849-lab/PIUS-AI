@@ -1,89 +1,368 @@
-const config = require('../config');
-const moment = require('moment-timezone');
+const config = require('../config')
 const { cmd, commands } = require('../command');
-const axios = require('axios');
-
-function toSmallCaps(str) {
-  const smallCaps = {
-    A: 'ᴀ', B: 'ʙ', C: 'ᴄ', D: 'ᴅ', E: 'ᴇ', F: 'ғ', G: 'ɢ', H: 'ʜ',
-    I: 'ɪ', J: 'ᴊ', K: 'ᴋ', L: 'ʟ', M: 'ᴍ', N: 'ɴ', O: 'ᴏ', P: 'ᴘ',
-    Q: 'ǫ', R: 'ʀ', S: 's', T: 'ᴛ', U: 'ᴜ', V: 'ᴠ', W: 'ᴡ', X: 'x',
-    Y: 'ʏ', Z: 'ᴢ'
-  };
-  return str.toUpperCase().split('').map(c => smallCaps[c] || c).join('');
-}
+const path = require('path');
+const os = require("os")
+const fs = require('fs');
+const { runtime, sleep } = require('../lib/functions')
+const axios = require('axios')
 
 cmd({
-  pattern: "menu2",
-  alias: ["❄️", "mega", "allmenu"],
-  use: '.menu2',
-  desc: "Show all bot commands",
-  category: "main",
-  react: "❄️",
-  filename: __filename
+    pattern: "menu2",
+    alias: ["allmenu", "fullmenu"],
+    desc: "Show all bot commands",
+    category: "main",
+    react: "✅",
+    filename: __filename
 },
-// GHALATI YAHAN THI, AB THEEK KAR DI GAYI HAI
-async (dyby, mek, m, { from, reply, sender }) => { // <--- PEHLI TABDEELI YAHAN
-  try {
-    const totalCommands = commands.length;
-    const date = moment().tz("Asia/Karachi").format("dddd, DD MMMM YYYY");
+async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        // WhatsApp Verified (Blue Tick) wala reply object
+        const verifiedReply = {
+            key: {
+                participant: `0@s.whatsapp.net`,
+                fromMe: false,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                extendedTextMessage: {
+                    text: "Qadeer-AI Official",
+                    contextInfo: {
+                        mentionedJid: [],
+                        verifiedBizName: "Qadeer-AI"
+                    }
+                }
+            }
+        };
 
-    const uptime = () => {
-      let sec = process.uptime();
-      let h = Math.floor(sec / 3600);
-      let m = Math.floor((sec % 3600) / 60);
-      let s = Math.floor(sec % 60);
-      return `${h}h ${m}m ${s}s`;
-    };
+        let dec = `╔═〔 *${config.BOT_NAME}* 〕╗
 
-    let dybymenu = `
-*╭══〘 𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈 〙*
-*┃❍* *ᴜsᴇʀ* : @${sender.split("@")[0]}
-*┃❍* *ʀᴜɴᴛɪᴍᴇ* : ${uptime()}
-*┃❍* *ᴍᴏᴅᴇ* : *${config.MODE}*
-*┃❍* *ᴘʀᴇғɪx* : [${config.PREFIX}]
-*┃❍* *ᴩʟᴜɢɪɴ* :  ${totalCommands}
-*┃❍* *ᴅᴇᴠ* : *𝐐𝐚𝐝𝐞𝐞𝐫 𝐊𝐡𝐚𝐧*
-*┃❍* *ᴠᴇʀsɪᴏɴs* : *4.0.0*
-*╰════════════════⊷*`;
-    let category = {};
-    for (let cmd of commands) {
-      if (!cmd.category) continue;
-      if (!category[cmd.category]) category[cmd.category] = [];
-      category[cmd.category].push(cmd);
+║ *Owner* : *${config.OWNER_NAME}*
+║ *Library* : *Baileys Pro*
+║ *Hosting* : *Heroku*
+║ *Mode* : [ *${config.MODE}* ]
+║ *Prefix* : [ *${config.PREFIX}* ]
+║ *Version* : *4.0.0*
+╚═══════════════╝
+
+╭✧〈 𝐌𝐀𝐈𝐍 𝐌𝐄𝐍𝐔 〉
+┃🜸 praytime
+┃🜸 quran
+┃🜸 menu
+┃🜸 menu2
+┃🜸 ping
+┃🜸 speed
+┃🜸 alive
+┃🜸 alive2
+┃🜸 setalive
+┃🜸 runtime
+┃🜸 repo
+┃🜸 owner
+┃🜸 restart
+┃🜸 creator
+╰────────────๏
+
+╭✧〈 𝐀𝐈 𝐌𝐄𝐍𝐔 〉
+┃🜸 ai
+┃🜸 aivoice
+┃🜸 creat-img or imagine
+┃🜸 creat-img1 or imagine2
+┃🜸 creat-img2 or imagine3
+┃🜸 deepseek
+╰────────────๏
+
+╭✧〈 𝐎𝐖𝐍𝐄𝐑 𝐌𝐄𝐍𝐔 〉
+┃🜸 owner
+┃🜸 restart
+┃🜸 vv
+┃🜸 vv2
+┃🜸 block
+┃🜸 unblock
+┃🜸 setsudo
+┃🜸 delsudo
+┃🜸 listsudo
+┃🜸 ban
+┃🜸 unban
+┃🜸 listban
+┃🜸 update
+┃🜸 alive
+┃🜸 ping
+┃🜸 gjid
+┃🜸 help
+┃🜸 jid-all
+┃🜸 gjid
+┃🜸 clearchats
+┃🜸 setpp
+┃🜸 broadcast
+┃🜸 shutdown
+┃🜸 viewpassword
+┃🜸 setpassword
+┃🜸 share
+╰────────────๏
+
+╭✧〈 𝐒𝐄𝐓𝐓𝐈𝐍𝐆𝐒 𝐌𝐄𝐍𝐔 〉
+┃🜸 admin-events
+┃🜸 welcome
+┃🜸 mode or setmode
+┃🜸 auto-typing
+┃🜸 mention-reply
+┃🜸 always-online
+┃🜸 auto-recording
+┃🜸 auto-seen
+┃🜸 status-react
+┃🜸 status-reply
+┃🜸 auto-react
+┃🜸 auto-reply
+┃🜸 auto-sticker
+┃🜸 anti-bad
+┃🜸 read-message
+╰────────────๏
+
+╭✧〈 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 𝐌𝐄𝐍𝐔 〉
+┃🜸 fb
+┃🜸 fb1
+┃🜸 fb2
+┃🜸 mediafire
+┃🜸 ig
+┃🜸 tiktok
+┃🜸 ringtone
+┃🜸 apk
+┃🜸 apk2
+┃🜸 gitclone
+┃🜸 pindl
+┃🜸 rw
+┃🜸 yts
+┃🜸 play
+┃🜸 video
+╰────────────๏
+
+╭✧〈 𝐆𝐑𝐎𝐔𝐏 𝐌𝐄𝐍𝐔 〉
+┃🜸 requestlist
+┃🜸 acceptall
+┃🜸 rejectall
+┃🜸 admin
+┃🜸 add
+┃🜸 demote
+┃🜸 kick
+┃🜸 promote
+┃🜸 demote
+┃🜸 dismiss
+┃🜸 updategdesc
+┃🜸 updategname
+┃🜸 ginfo
+┃🜸 join
+┃🜸 invite
+┃🜸 ginfo
+┃🜸 leave
+┃🜸 delete
+┃🜸 lockgc
+┃🜸 unlockgc
+┃🜸 newgc
+┃🜸 mute
+┃🜸 out
+┃🜸 promote
+┃🜸 poll
+┃🜸 revoke
+┃🜸 hidetag
+┃🜸 tagall
+┃🜸 removemembers
+┃🜸 removeadmins
+┃🜸 removeall2
+┃🜸 mute
+┃🜸 unmute
+┃🜸 tagall
+┃🜸 tagadmins
+┃🜸 broadcast
+╰────────────๏
+
+
+╭✧〈 𝐂𝐇𝐀𝐍𝐍𝐄𝐋 𝐌𝐄𝐍𝐔 〉
+┃🜸 channel-id
+┃🜸 channel-info
+┃🜸 channel-react
+╰────────────๏
+
+╭✧〈 𝐋𝐎𝐆𝐎 𝐌𝐀𝐊𝐄𝐑 〉
+┃🜸 neonlight
+┃🜸 blackpink
+┃🜸 dragonball
+┃🜸 3dcomic
+┃🜸 america
+┃🜸 naruto
+┃🜸 sadgirl
+┃🜸 clouds
+┃🜸 futuristic
+┃🜸 3dpaper
+┃🜸 eraser
+┃🜸 sunset
+┃🜸 leaf
+┃🜸 galaxy
+┃🜸 sans
+┃🜸 boom
+┃🜸 hacker
+┃🜸 devilwings
+┃🜸 nigeria
+┃🜸 bulb
+┃🜸 angelwings
+┃🜸 zodiac
+┃🜸 luxury
+┃🜸 paint
+┃🜸 frozen
+┃🜸 castle
+┃🜸 tatoo
+┃🜸 valorant
+┃🜸 bear
+┃🜸 typography
+┃🜸 birthday
+╰────────────๏
+
+╭✧〈 𝐅𝐔𝐍 𝐌𝐄𝐍𝐔 〉
+┃🜸 flirt
+┃🜸 character
+┃🜸 repeat
+┃🜸 shayari
+┃🜸 hack
+┃🜸 happy
+┃🜸 angry
+┃🜸 shy
+┃🜸 sad
+┃🜸 hot
+┃🜸 confused
+┃🜸 heart
+┃🜸 nikal
+┃🜸 moon
+┃🜸 compatibility
+┃🜸 aura
+┃🜸 roast
+┃🜸 compliment
+┃🜸 8ball
+┃🜸 lovetest
+┃🜸 quote
+┃🜸 marige
+┃🜸 bacha
+┃🜸 bachi
+┃🜸 jail
+┃🜸 wanted
+╰────────────๏
+
+╭✧〈 𝐓𝐎𝐎𝐋𝐒 𝐌𝐄𝐍𝐔 〉
+┃🜸 calculate
+┃🜸 emojimix
+┃🜸 fancy
+┃🜸 take
+┃🜸 emoji
+┃🜸 gpass
+┃🜸 trt
+┃🜸 shorturl
+┃🜸 tourl
+┃🜸 sticker2img
+┃🜸 vsticker
+┃🜸 toptt
+┃🜸 topdf
+┃🜸 attp
+┃🜸 tts2
+┃🜸 tts3
+╰────────────๏
+
+╭✧〈 𝐀𝐍𝐈𝐌𝐄 𝐌𝐄𝐍𝐔 〉
+┃🜸 animegirl
+┃🜸 animegirl1
+┃🜸 animegirl2
+┃🜸 animegirl3
+┃🜸 animegirl4
+┃🜸 animegirl5
+┃🜸 neko
+┃🜸 maid
+┃🜸 waifu
+┃🜸 truth
+┃🜸 dare
+┃🜸 fack
+┃🜸 foxgirl
+┃🜸 dog
+┃🜸 garl
+┃🜸 loli
+┃🜸 awoo
+┃🜸 megnumin
+┃🜸 anime1
+┃🜸 anime2
+┃🜸 anime3
+┃🜸 anime4
+┃🜸 anime5
+┃🜸 animenews
+┃🜸 naruto
+╰────────────๏
+
+╭✧〈 𝐔𝐓𝐈𝐋𝐓𝐘 𝐌𝐄𝐍𝐔 〉
+┃🜸 caption
+┃🜸 jid
+┃🜸 save
+┃🜸 take
+┃🜸 sticker
+┃🜸 person
+┃🜸 report
+┃🜸 reportlist
+┃🜸 tempmail
+┃🜸 checkmail
+┃🜸 requestunban
+╰────────────๏
+
+
+╭✧〈 𝐒𝐄𝐀𝐑𝐂𝐇 𝐌𝐄𝐍𝐔 〉
+┃🜸 yts
+┃🜸 define
+┃🜸 sgithub
+┃🜸 repo
+┃🜸 srepo
+┃🜸 tiktoksearch
+┃🜸 tiktokstalk
+╰────────────๏
+
+╭✧〈 𝐏𝐑𝐈𝐕𝐀𝐂𝐘 𝐌𝐄𝐍𝐔 〉
+┃🜸 privacy
+┃🜸 blocklist
+┃🜸 getbio
+┃🜸 setppall
+┃🜸 setonline
+┃🜸 setpp
+┃🜸 setmyname
+┃🜸 updatebio
+┃🜸 groupsprivacy
+┃🜸 getprivacy
+┃🜸 getpp
+╰────────────๏
+
+> *© 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙰𝙸 🤖* `;
+
+        await conn.sendMessage(
+            from,
+            {
+                image: { url: config.MENU_IMAGE_URL || 'https://qu.ax/Pusls.jpg' },
+                caption: dec,
+                contextInfo: {
+                    mentionedJid: [m.sender],
+                    forwardingScore: 999,
+                    isForwarded: true,
+                    forwardedNewsletterMessageInfo: {
+                        newsletterJid: '120363299692857279@newsletter',
+                        newsletterName: config.BOT_NAME,
+                        serverMessageId: 143
+                    }
+                }
+            },
+            { quoted: verifiedReply }
+        );
+
+        // Add a 2-second delay before sending the audio
+        await sleep(2000);
+
+        const audioPath = path.join(__dirname, '../Qadeer/menu.m4a');
+        await conn.sendMessage(from, {
+            audio: fs.readFileSync(audioPath),
+            mimetype: 'audio/mp4',
+            ptt: true,
+        }, { quoted: mek });
+
+    } catch (e) {
+        console.log(e);
+        reply(`❌ Error: ${e}`);
     }
-
-    const keys = Object.keys(category).sort();
-    for (let k of keys) {
-      dybymenu += `\n\n┌── 『 ${k.toUpperCase()} MENU 』`;
-      const cmds = category[k].filter(c => c.pattern).sort((a, b) => a.pattern.localeCompare(b.pattern));
-      cmds.forEach((cmd) => {
-        const usage = cmd.pattern.split('|')[0];
-        dybymenu += `\n├❃ ${config.PREFIX}${toSmallCaps(usage)}`;
-      });
-  dybymenu += `\n┗━━━━━━━━━━━━━━❃`;
-    }
-
-    dybymenu += `\n`;
-    
-await dyby.sendMessage(from, {
-      image: { url: config.MENU_IMAGE_URL },
-      caption: dybymenu,
-      contextInfo: {
-        mentionedJid: [sender], // Yahan bhi m.sender ki jagah sender istemal karna behtar hai
-        forwardingScore: 999,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363345872435489@newsletter',
-          newsletterName: '𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈',
-          serverMessageId: 143
-        }
-      }
-    }, { quoted: mek });
-
-    
-  } catch (e) {
-    console.error(e);
-    reply(`❌ Error: ${e.message}`);
-  }
 });
