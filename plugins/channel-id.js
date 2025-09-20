@@ -5,7 +5,7 @@ cmd({
   alias: ["newsletter", "id"],
   react: "📡",
   desc: "Get WhatsApp Channel info from link",
-  category: "channel",
+  category: "whatsapp",
   filename: __filename
 }, async (conn, mek, m, {
   from,
@@ -14,7 +14,7 @@ cmd({
   reply
 }) => {
   try {
-    if (!q) return reply("❎ Please provide a WhatsApp Channel link.\n\n*Example:* .cid https://whatsapp.com/channel/123456789");
+    if (!q) return reply("Please provide a WhatsApp Channel link.❎\n\n*Example:* .cinfo https://whatsapp.com/channel/123456789");
 
     const match = q.match(/whatsapp\.com\/channel\/([\w-]+)/);
     if (!match) return reply("⚠️ *Invalid channel link format.*\n\nMake sure it looks like:\nhttps://whatsapp.com/channel/xxxxxxxxx");
@@ -30,11 +30,20 @@ cmd({
 
     if (!metadata || !metadata.id) return reply("❌ Channel not found or inaccessible.");
 
-    const infoText = `*— 乂 Channel Info —*\n\n` +
-      `🆔 *ID:* ${metadata.id}\n` +
-      `📌 *Name:* ${metadata.name}\n` +
-      `👥 *Followers:* ${metadata.subscribers?.toLocaleString() || "N/A"}\n` +
-      `📅 *Created on:* ${metadata.creation_time ? new Date(metadata.creation_time * 1000).toLocaleString("id-ID") : "Unknown"}`;
+    const infoText = `‎‎╔═══ ◥◣❖◢◤ ═══╗
+‎             𝐂𝐡𝐚𝐧𝐧𝐞𝐥 𝐈𝐧𝐟𝐨  
+╚═══ ◢◤❖◥◣ ═══╝
+‎
+‎╔═══════════════❖
+‎┃ 🆔  ɪᴅ: ${metadata.id}
+‎┃ ✨  ɴᴀᴍᴇ: ${metadata.name}
+‎┃ 👥  ғᴏʟʟᴏᴡᴇʀs: ${metadata.subscribers?.toLocaleString() || "N/A"}
+‎┃ 📅  ᴄʀᴇᴀᴛᴇᴅ ᴏɴ:
+‎┃     ${metadata.creation_time ? new Date(metadata.creation_time * 1000).toLocaleString("id-ID") : "Unknown"}
+‎╚═══════════════❖
+*╔═════ ◥◣❖◢◤ ═════╗*
+   *𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁-𝙰𝙸*
+*╚═════ ◢◤❖◥◣ ═════╝*`;
 
     if (metadata.preview) {
       await conn.sendMessage(from, {
