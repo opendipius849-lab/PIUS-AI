@@ -256,9 +256,9 @@ async function connectToWA() {
         } else {
             try {
                 groupMetadata = await conn.groupMetadata(from);
-                groupMetadataCache.set(from, groupMetadata);
+                if (groupMetadata) groupMetadataCache.set(from, groupMetadata);
             } catch (e) {
-                console.error(e);
+                console.error("Failed to fetch group metadata:", e);
                 groupMetadata = {}; // Agar error aye to empty object
             }
         }
@@ -483,14 +483,6 @@ async function connectToWA() {
     return buffer
   }
 
-  /**
-   *
-   * @param {*} jid
-   * @param {*} message
-   * @param {*} forceForward
-   * @param {*} options
-   * @returns
-   */
   //================================================
   conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
     let mime = '';
@@ -540,12 +532,6 @@ async function connectToWA() {
     return proto.WebMessageInfo.fromObject(copy)
   }
 
-
-  /**
-   *
-   * @param {*} path
-   * @returns
-   */
   //=====================================================
   conn.getFile = async (PATH, save) => {
     let res
@@ -560,7 +546,7 @@ async function connectToWA() {
     return {
       res,
       filename,
-      size: await getSizeMedia(data),
+      size: data.length,
       ...type,
       data
     }
@@ -601,8 +587,8 @@ async function connectToWA() {
   conn.sendMedia = async (jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
     let types = await conn.getFile(path, true)
     let { mime, ext, res, data, filename } = types
-    if (res && res.status !== 200 || file.length <= 65536) {
-      try { throw { json: JSON.parse(file.toString()) } } catch (e) { if (e.json) throw e.json }
+    if (res && res.status !== 200 || data.length <= 65536) {
+      try { throw { json: JSON.parse(data.toString()) } } catch (e) { if (e.json) throw e.json }
     }
     let type = '',
       mimetype = mime,
@@ -628,13 +614,6 @@ async function connectToWA() {
     }, { quoted, ...options })
     return fs.promises.unlink(pathFile)
   }
-  /**
-   *
-   * @param {*} message
-   * @param {*} filename
-   * @param {*} attachExtension
-   * @returns
-   */
   //=====================================================
   conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
     let buffer;
@@ -663,53 +642,18 @@ async function connectToWA() {
       options
     );
   };
-  /**
-   *
-   * @param {*} jid
-   * @param {*} path
-   * @param {*} quoted
-   * @param {*} options
-   * @returns
-   */
   //=====================================================
   conn.sendTextWithMentions = async (jid, text, quoted, options = {}) => conn.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
 
-  /**
-   *
-   * @param {*} jid
-   * @param {*} path
-   * @param {*} caption
-   * @param {*} quoted
-   * @param {*} options
-   * @returns
-   */
   //=====================================================
   conn.sendImage = async (jid, path, caption = '', quoted = '', options) => {
     let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split `,` [1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
     return await conn.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
   }
 
-  /**
-   *
-   * @param {*} jid
-   * @param {*} path
-   * @param {*} caption
-   * @param {*} quoted
-   * @param {*} options
-   * @returns
-   */
   //=====================================================
   conn.sendText = (jid, text, quoted = '', options) => conn.sendMessage(jid, { text: text, ...options }, { quoted })
 
-  /**
-   *
-   * @param {*} jid
-   * @param {*} buttons
-   * @param {*} caption
-   * @param {*} footer
-   * @param {*} quoted
-   * @param {*} options
-   */
   //=====================================================
   conn.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
     let buttonMessage = {
@@ -737,59 +681,20 @@ async function connectToWA() {
     }), options)
     conn.relayMessage(jid, template.message, { messageId: template.key.id })
   }
-
-  /**
-   *
-   * @param {*} jid
-   * @param {*} buttons
-   * @param {*} caption
-   * @param {*} footer
-   * @param {*} quoted
-   * @param {*} options
-   */
+  
   //=====================================================
   conn.getName = (jid, withoutContact = false) => {
     id = conn.decodeJid(jid);
-
     withoutContact = conn.withoutContact || withoutContact;
-
     let v;
-
     if (id.endsWith('@g.us'))
       return new Promise(async resolve => {
         v = store.contacts[id] || {};
-
-        if (!(v.name.notify || v.subject))
-          v = conn.groupMetadata(id) || {};
-
-        resolve(
-          v.name ||
-          v.subject ||
-          PhoneNumber(
-            '+' + id.replace('@s.whatsapp.net', ''),
-          ).getNumber('international'),
-        );
+        if (!(v.name || v.subject)) v = conn.groupMetadata(id) || {};
+        resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'));
       });
-    else
-      v =
-      id === '0@s.whatsapp.net' ?
-      {
-        id,
-
-        name: 'WhatsApp',
-      } :
-      id === conn.decodeJid(conn.user.id) ?
-      conn.user :
-      store.contacts[id] || {};
-
-    return (
-      (withoutContact ? '' : v.name) ||
-      v.subject ||
-      v.verifiedName ||
-      PhoneNumber(
-        '+' + jid.replace('@s.whatsapp.net', ''),
-      ).getNumber('international')
-    );
+    else v = id === '0@s.whatsapp.net' ? { id, name: 'WhatsApp' } : id === conn.decodeJid(conn.user.id) ? conn.user : (store.contacts[id] || {});
+    return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international');
   };
 
   // Vcard Functionality
@@ -798,44 +703,18 @@ async function connectToWA() {
     for (let i of kon) {
       list.push({
         displayName: await conn.getName(i + '@s.whatsapp.net'),
-        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await conn.getName(
-          i + '@s.whatsapp.net',
-        )}\nFN:${
-          global.OwnerName
-        }\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${
-          global.email
-        }\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${
-          global.github
-        }/khan-xmd\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
-          global.location
-        };;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
+        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await conn.getName(i + '@s.whatsapp.net')}\nFN:${global.OwnerName}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${global.email}\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${global.github}/khan-xmd\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${global.location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
       });
     }
-    conn.sendMessage(
-      jid, {
-        contacts: {
-          displayName: `${list.length} Contact`,
-          contacts: list,
-        },
-        ...opts,
-      }, { quoted },
-    );
+    conn.sendMessage(jid, { contacts: { displayName: `${list.length} Contact`, contacts: list }, ...opts, }, { quoted });
   };
 
   // Status aka brio
   conn.setStatus = status => {
     conn.query({
       tag: 'iq',
-      attrs: {
-        to: '@s.whatsapp.net',
-        type: 'set',
-        xmlns: 'status',
-      },
-      content: [{
-        tag: 'status',
-        attrs: {},
-        content: Buffer.from(status, 'utf-8'),
-      }, ],
+      attrs: { to: '@s.whatsapp.net', type: 'set', xmlns: 'status', },
+      content: [{ tag: 'status', attrs: {}, content: Buffer.from(status, 'utf-8'), },],
     });
     return status;
   };
