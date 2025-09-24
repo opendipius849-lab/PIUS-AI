@@ -11,7 +11,6 @@ function cmd(info, func) {
     commands.push(data);
     return data;
 }
-
 module.exports = {
     cmd,
     AddCommand:cmd,

@@ -1,6 +1,6 @@
-name: qadeer-ai
+name: QADEER-AI
 services:
-  - name: qadeer-ai-service
+  - name: qadeer_ai-service
     type: web
     ports:
       - 5000
@@ -12,3 +12,4 @@ services:
     regions:
       - fra
       - sin
+
