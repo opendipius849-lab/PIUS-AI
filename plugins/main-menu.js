@@ -345,16 +345,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             { quoted: verifiedReply }
         );
 
-        // Add a 2-second delay before sending the audio
-        await sleep(2000);
-
-        const audioPath = path.join(__dirname, '../Qadeer/menu.mp3');
-        await conn.sendMessage(from, {
-            audio: fs.readFileSync(audioPath),
-            mimetype: 'audio/mp4',
-            ptt: true,
-        }, { quoted: mek });
-
     } catch (e) {
         console.log(e);
         reply(`❌ Error: ${e}`);

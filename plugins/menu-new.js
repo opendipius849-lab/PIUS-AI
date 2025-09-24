@@ -16,7 +16,6 @@ cmd({
     await client.sendMessage(afk.key['remoteJid'], { react: { text: '🤖', key: afk.key } });
 
     try {
-        // WhatsApp Verified (Blue Tick) wala reply object
         const verifiedReply = {
             key: {
                 participant: `0@s.whatsapp.net`,
@@ -88,24 +87,11 @@ cmd({
             }
         };
 
-        const sendFollowUpAudio = async () => {
-            try {
-                await sleep(2000); // 2-second delay
-                await client.sendMessage(from, {
-                    audio: { url: 'https://github.com/Qadeer-Xtech/TOFAN-DATA/raw/refs/heads/main/autovoice/menunew.m4a' },
-                    mimetype: 'audio/mp4',
-                    ptt: true
-                }, { quoted: message });
-            } catch (e) {
-                console.log('Audio send failed, continuing without it');
-            }
-        };
-
         let menuMessage;
         try {
-            [menuMessage] = await Promise.all([
-                Promise.race([sendInitialImage(), new Promise((_, reject) => setTimeout(() => reject(new Error('Image send timeout')), 10000))]),
-                Promise.race([sendFollowUpAudio(), new Promise((_, reject) => setTimeout(() => reject(new Error('Audio send timeout')), 8000))])
+            menuMessage = await Promise.race([
+                sendInitialImage(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Image send timeout')), 10000))
             ]);
         } catch (error) {
             console.log("Handler error:", error);
@@ -115,6 +101,7 @@ cmd({
         }
 
         const menuMessageId = menuMessage.key.id;
+
 
         const menuOptions = {
             '1': {
@@ -454,7 +441,7 @@ cmd({
 
         setTimeout(() => {
             client.ev.off('messages.upsert', messageHandler);
-        }, 300000); // 5 minutes
+        }, 300000); // 5 minute
 
     } catch (error) {
         console.error('Menu send error:', error);
