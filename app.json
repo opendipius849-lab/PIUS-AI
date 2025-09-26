@@ -1,6 +1,6 @@
 {
   "name": "QADEER-AI",
-  "description": "Simple WhatsApp bot by Qadeer Khan",
+  "description": "Simple WhatsApp bot made by Qadeer Khan",
   "logo": "https://qu.ax/Pusls.jpg",
   "keywords": ["QADEER-AI"],
   "success_url": "/",
@@ -37,7 +37,7 @@
       "required": false,
       "value": "true"  
     },
-    
+              
     "ALWAYS_ONLINE": {
       "description": "Make it true if want always online.",
       "required": false,
@@ -65,27 +65,27 @@
 
     "AUTO_STATUS_REACT": {
       "description": "make it true for automatic status reaction or like.",
-      "required": true,
-      "value": "true"
+      "required": false,
+      "value": "false"
     }, 
 
     "AUTO_STATUS_REPLY": {
       "description": "Make it true for auto reply msg on status seen.",
-      "required": true,
+      "required": false,
       "value": "false"
     }, 
 
     "AUTO_STATUS_MSG": {
       "description": "Type custom message on status reply",
-      "required": true,
-      "value": "*SEEN YOUR STATUS BY QADEER-AI 🤖*"
+      "required": false,
+      "value": "*SEEN YOUR STATUS BY QADEER-AI 🥶*"
    
      }, 
     
     "OWNER_NAME": {
       "description": "Type Bot Owner Name.",
       "required": false,
-      "value": "QADEER_KHAN"
+      "value": "*Qadeer Khan*"
 }, 
 
     "OWNER_NUMBER": {
@@ -105,7 +105,7 @@
     "ANTI_LINK": {
       "description": "Make it true if you want bot auto remove group link.",
       "required": true,
-      "value": "true"
+      "value": "false"
       
     },
 
@@ -119,7 +119,7 @@
     "ANTI_BAD": {
       "description": "Make it true if you want bot auto delete bad words.",
       "required": false,
-      "value": "false"
+      "value": "true"
     },
 
    "MENTION_REPLY": {
@@ -137,7 +137,7 @@
      "DESCRIPTION": {
       "description": "add caption for menu and other",
       "required": false,
-      "value": "*CREATER QADEER KHAN*"
+      "value": "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ǫᴀᴅᴇᴇʀ ᴋʜᴀɴ*"
     },
 
       "DELETE_LINKS": {
@@ -192,7 +192,7 @@
     "WELCOME": {
       "description": "make it true if want goodbye and welcome message in groups.",
       "required": false,
-      "value": "false"
+      "value": "true"
     },
 
     "READ_MESSAGE": {
@@ -210,4 +210,4 @@
      ],
   "stack": "heroku-24"
 }
-
+  
