@@ -1,4 +1,3 @@
-//menu-new.js
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const { runtime, sleep } = require('../lib/functions');
@@ -16,7 +15,6 @@ cmd({
     await client.sendMessage(afk.key['remoteJid'], { react: { text: '🤖', key: afk.key } });
 
     try {
-        // WhatsApp Verified (Blue Tick) wala reply object
         const verifiedReply = {
             key: {
                 participant: `0@s.whatsapp.net`,
@@ -38,7 +36,7 @@ cmd({
                       
 ╔═════════════╗
 ║ 👤 *Owner* : *${config.OWNER_NAME}*
-║ 📦 *Library* : *Baileys AI*
+║ 📦 *Library* : *Baileys Pro*
 ║ 🚦 *Mode* : *[ ${config.MODE} ]*
 ║ 🔖 *Prefix* : *[ ${config.PREFIX} ]*
 ║ 📌 *Version* : *4.0.0*
@@ -75,43 +73,16 @@ cmd({
             }
         };
 
-        const sendInitialImage = async () => {
-            try {
-                return await client.sendMessage(from, {
-                    image: { url: 'https://qu.ax/Pusls.jpg' },
-                    caption: initialMenuText,
-                    contextInfo: contextInfo
-                }, { quoted: verifiedReply });
-            } catch (e) {
-                console.log('Image send failed, falling back to text');
-                return await client.sendMessage(from, { text: initialMenuText, contextInfo: contextInfo }, { quoted: verifiedReply });
-            }
-        };
-
-        const sendFollowUpAudio = async () => {
-            try {
-                await sleep(2000); // 2-second delay
-                await client.sendMessage(from, {
-                    audio: { url: 'https://github.com/Qadeer-Xtech/TOFAN-DATA/raw/refs/heads/main/autovoice/menunew.m4a' },
-                    mimetype: 'audio/mp4',
-                    ptt: true
-                }, { quoted: message });
-            } catch (e) {
-                console.log('Audio send failed, continuing without it');
-            }
-        };
-
         let menuMessage;
         try {
-            [menuMessage] = await Promise.all([
-                Promise.race([sendInitialImage(), new Promise((_, reject) => setTimeout(() => reject(new Error('Image send timeout')), 10000))]),
-                Promise.race([sendFollowUpAudio(), new Promise((_, reject) => setTimeout(() => reject(new Error('Audio send timeout')), 8000))])
-            ]);
-        } catch (error) {
-            console.log("Handler error:", error);
-            if (!menuMessage) {
-                menuMessage = await client.sendMessage(from, { text: initialMenuText, contextInfo: contextInfo }, { quoted: verifiedReply });
-            }
+            menuMessage = await client.sendMessage(from, {
+                image: { url: 'https://qu.ax/Pusls.jpg' },
+                caption: initialMenuText,
+                contextInfo: contextInfo
+            }, { quoted: verifiedReply });
+        } catch (e) {
+            console.log('Image send failed, falling back to text');
+            menuMessage = await client.sendMessage(from, { text: initialMenuText, contextInfo: contextInfo }, { quoted: verifiedReply });
         }
 
         const menuMessageId = menuMessage.key.id;

@@ -1,9 +1,9 @@
 const config = require('../config')
 const { cmd, commands } = require('../command');
-const path = require('path');
+// const path = require('path')
+// const os = require("os")
 const os = require("os")
-const fs = require('fs');
-const { runtime, sleep } = require('../lib/functions')
+const { runtime } = require('../lib/functions')
 const axios = require('axios')
 
 cmd({
@@ -175,7 +175,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ╭✧〈 𝐂𝐇𝐀𝐍𝐍𝐄𝐋 𝐌𝐄𝐍𝐔 〉
 ┃🜸 channel-id
 ┃🜸 channel-info
-┃🜸 channel-react
 ╰────────────๏
 
 ╭✧〈 𝐋𝐎𝐆𝐎 𝐌𝐀𝐊𝐄𝐑 〉
@@ -345,15 +344,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             { quoted: verifiedReply }
         );
 
-        // Add a 2-second delay before sending the audio
-        await sleep(2000);
-
-        const audioPath = path.join(__dirname, '../Qadeer/menu.mp3');
-        await conn.sendMessage(from, {
-            audio: fs.readFileSync(audioPath),
-            mimetype: 'audio/mp4',
-            ptt: true,
-        }, { quoted: mek });
+        // audio send removed as requested
 
     } catch (e) {
         console.log(e);
