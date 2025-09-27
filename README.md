@@ -73,7 +73,7 @@ ___
 <h1 align="center"> 𝐆𝐞𝐭 𝐒𝐞𝐬𝐬𝐢𝐨𝐧 </h1>
 
 <p align="center">
-  <a href="https://qadeer-base64-ai-b6438d8191c5.herokuapp.com/">
+  <a href="https://pa-qa-5ac458803143.herokuapp.com/">
     <img src="./Qadeer/get-session-btn.svg" alt="GET SESSION" width="260"/>
   </a>
 </p>
