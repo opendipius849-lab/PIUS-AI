@@ -14,7 +14,7 @@ AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN || "true",
 // make true or false status auto seen
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
 // make true if you want auto reply on status 
-AUTO_STICKER: process.env.AUTO_STICKER || "false",
+AUTO_STICKER: process.env.AUTO_STICKER || "true",
  //make true if you want auto sticker   
 AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "true",
 // make true if you want auto reply on status 
@@ -24,12 +24,12 @@ WELCOME: process.env.WELCOME || "true",
 // true if want welcome and goodbye msg in groups    
 ADMIN_EVENTS: process.env.ADMIN_EVENTS || "false",
 // make true to know who dismiss or promoted a member in group
-ANTI_LINK: process.env.ANTI_LINK || "false",
+ANTI_LINK: process.env.ANTI_LINK || "true",
 // make anti link true,false for groups 
 ANTI_DELETE: process.env.ANTI_DELETE || "true",
 // set true false for anti delete     
 ANTI_DEL_PATH: process.env.ANTI_DEL_PATH || "inbox", 
-// change it to 'same' if you want to resend deleted message in same chat  
+// change it to 'same' if you want to resend deleted message in same chat     
 MENTION_REPLY: process.env.MENTION_REPLY || "false",
 // make true if want auto voice reply if someone menetion you 
 MENU_IMAGE_URL: process.env.MENU_IMAGE_URL || "https://qu.ax/Pusls.jpg",
@@ -50,11 +50,11 @@ OWNER_NUMBER: process.env.OWNER_NUMBER || "923151105391",
 // add your bot owner number
 OWNER_NAME: process.env.OWNER_NAME || "Qadeer Khan",
 // add bot owner name
-DESCRIPTION: process.env.DESCRIPTION || "*© 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙰𝙸*",
+DESCRIPTION: process.env.DESCRIPTION || "*© 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽*",
 // bot description    
 ALIVE_IMG: process.env.ALIVE_IMG || "https://qu.ax/Pusls.jpg",
 // image for alive msg
-LIVE_MSG: process.env.LIVE_MSG || "> *QADEER-AI*🤖",
+LIVE_MSG: process.env.LIVE_MSG || "> *QADEER-AI RUNNING WITH SPEED OF LIGHT*⚡",
 // alive msg content
 READ_MESSAGE: process.env.READ_MESSAGE || "false",
 // Turn true or false for automatic read msgs
@@ -74,7 +74,7 @@ AUTO_REPLY: process.env.AUTO_REPLY || "false",
 // automatic text reply 
 ALWAYS_ONLINE: process.env.ALWAYS_ONLINE || "false",
 // always online 
-PUBLIC_MODE: process.env.PUBLIC_MODE || "false",
+PUBLIC_MODE: process.env.PUBLIC_MODE || "true",
 // false if want private mode
 AUTO_TYPING: process.env.AUTO_TYPING || "false",
 // show typing status   

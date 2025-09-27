@@ -37,7 +37,7 @@
       "required": false,
       "value": "true"  
     },
-              
+    
     "ALWAYS_ONLINE": {
       "description": "Make it true if want always online.",
       "required": false,
@@ -65,19 +65,19 @@
 
     "AUTO_STATUS_REACT": {
       "description": "make it true for automatic status reaction or like.",
-      "required": false,
-      "value": "false"
+      "required": true,
+      "value": "true"
     }, 
 
     "AUTO_STATUS_REPLY": {
       "description": "Make it true for auto reply msg on status seen.",
-      "required": false,
+      "required": true,
       "value": "false"
     }, 
 
     "AUTO_STATUS_MSG": {
       "description": "Type custom message on status reply",
-      "required": false,
+      "required": true,
       "value": "*SEEN YOUR STATUS BY QADEER-AI 🥶*"
    
      }, 
@@ -91,7 +91,7 @@
     "OWNER_NUMBER": {
       "description": "put the owner number for bot.",
       "required": false,
-      "value": "923151105391"
+      "value": "923xxxxxxx"
 
     }, 
 
@@ -105,7 +105,7 @@
     "ANTI_LINK": {
       "description": "Make it true if you want bot auto remove group link.",
       "required": true,
-      "value": "false"
+      "value": "true"
       
     },
 
@@ -137,7 +137,7 @@
      "DESCRIPTION": {
       "description": "add caption for menu and other",
       "required": false,
-      "value": "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ǫᴀᴅᴇᴇʀ ᴋʜᴀɴ*"
+      "value": "*© https://qu.ax/Pusls.jpg*"
     },
 
       "DELETE_LINKS": {
