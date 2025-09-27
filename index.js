@@ -124,6 +124,9 @@ async function connectToWA() {
         version: version
     });
 
+    // =================================================================
+    // === CONNECTION UPDATE (YAHAN TABDEELI KI GAYI HAI) ===
+    // =================================================================
     sock.ev.on('connection.update', update => {
         const { connection, lastDisconnect } = update;
         if (connection === 'close') {
@@ -132,14 +135,23 @@ async function connectToWA() {
             }
         } else if (connection === 'open') {
             console.log('Bot connected to whatsapp ✅');
+            
+            // === PLUGIN LOADING WITH ERROR HANDLING ===
             const path = require('path');
             fs.readdirSync('./plugins/').forEach(plugin => {
                 if (path.extname(plugin).toLowerCase() == '.js') {
-                    require('./plugins/' + plugin);
+                    try {
+                        require('./plugins/' + plugin);
+                    } catch (e) {
+                        // Yahan error log hoga aur file ka naam bhi ayega
+                        console.error(`Error loading plugin: ${plugin}`);
+                        console.error(e);
+                    }
                 }
             });
-            console.log('Plugins installed successful ✅');
-            console.log('🧬 Installing Plugins');
+            console.log('Plugins loaded successfully ✅');
+            // ==========================================
+
             let startMessage = `╔═◈『𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈』◈═╗\n║🪀 ┃ *PRÉFIX:* ➥${config.PREFIX}\n║\n║♻️ ┃ *MODE:* *[${config.MODE}]*\n║\n║📦 ┃ *BOT REPO:*\n║      *After Final Update* \n║\n╚══════════════════╝\n> *𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽*`;
             sock.sendMessage(sock.user.id, {
                 image: { url: 'https://qu.ax/hDLFX.png' },
@@ -147,6 +159,7 @@ async function connectToWA() {
             });
         }
     });
+    // =================================================================
 
     sock.ev.on('creds.update', saveCreds);
 
@@ -211,7 +224,6 @@ async function connectToWA() {
         const q = args.join(' ');
         const textArgs = args.join(' ');
         const isGroup = from.endsWith('@g.us');
-        const isChannel = from.endsWith('@newsletter'); // Channel functionality
         const sender = m.key.fromMe ? (sock.user.id.split(':')[0] + '@s.whatsapp.net' || sock.user.id) : (m.key.participant || m.key.remoteJid);
         const senderNumber = sender.split('@')[0];
         const botNumber = sock.user.id.split(':')[0];
@@ -288,7 +300,7 @@ async function connectToWA() {
                     commandHandler.function(sock, m, message, {
                         from, quoted, body, isCmd, command, args, q, text: textArgs, isGroup, sender, senderNumber,
                         botNumber2: botJid, botNumber, pushname, isMe, isOwner, isCreator: botCreator, groupMetadata,
-                        groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply, isChannel
+                        groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply
                     });
                 } catch (e) {
                     console.error('[PLUGIN ERROR] ' + e);
@@ -296,14 +308,12 @@ async function connectToWA() {
             }
         }
         
-        // === NON-PREFIX COMMANDS (YAHAN 'BODY' KA LOGIC ADD KIYA GAYA HAI) ===
         commandModule.commands.map(async (command) => {
             const context = { from, l, quoted, body, isCmd, command, args, q, text: textArgs, isGroup, sender, senderNumber,
                               botNumber2: botJid, botNumber, pushname, isMe, isOwner, isCreator: botCreator, groupMetadata,
-                              groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply, isChannel };
+                              groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply };
             
-            // old index.js ki tarah 'body' aur 'text' dono triggers ko handle karega
-            if (body && (command.on === 'text' || command.on === 'body')) {
+            if (body && command.on === 'text') {
                 command.function(sock, m, message, context);
             } else if ((command.on === 'image' || command.on === 'photo') && m.type === 'imageMessage') {
                 command.function(sock, m, message, context);
@@ -311,7 +321,6 @@ async function connectToWA() {
                 command.function(sock, m, message, context);
             }
         });
-        // =======================================================
     });
     
     
@@ -426,4 +435,3 @@ app.listen(port, () => console.log(`Server listening on port http://localhost:${
 setTimeout(() => {
     connectToWA();
 }, 2500);
-
