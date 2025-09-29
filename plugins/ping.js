@@ -1,58 +1,47 @@
-
 const config = require('../config')
-let fs = require('fs')
-const os = require("os")
-const { cmd, commands } = require('../command')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
+const { cmd } = require('../command')
+const { runtime } = require('../lib/functions')
 
 cmd({
     pattern: "ping",
-    alias: ["speed", "pong", "ping2", "ping3"],
+    alias: ["speed", "pong"],
     use: ".ping",
-    desc: "Check bot's latency",
+    desc: "Check bot's latency and runtime",
     category: "main",
     react: "📟",
     filename: __filename
 },
-async (conn, mek, m, { from, sender, reply }) => {
+async (conn, mek, m, { from }) => {
     try {
         const start = Date.now();
+        
+        // Bhejny se pehle message ka key hasil karain
+        let pongMsg = await conn.sendMessage(from, { text: '*Pinging...*' }, { quoted: mek });
 
-        const reactionEmojis = ['🔥', '🌩️', '👑', '🎋', '📟'];
-        const textEmojis = ['🚀', '✨', '🌀', '📍'];
-
-        const reactionEmoji = reactionEmojis[Math.floor(Math.random() * reactionEmojis.length)];
-        let textEmoji = textEmojis[Math.floor(Math.random() * textEmojis.length)];
-
-        while (textEmoji === reactionEmoji) {
-            textEmoji = textEmojis[Math.floor(Math.random() * textEmojis.length)];
-        }
-
-        await conn.sendMessage(from, {
-            react: { text: textEmoji, key: mek.key }
-        });
-
-        const message = await conn.sendMessage(from, { text: '*_Testing Ping..._*' });
         const end = Date.now();
-        const ping = end - start;
+        const latency = end - start;
 
-        await conn.sendMessage(from, {
-            text: `*${reactionEmoji} 𝐏๏፝֟ƞ̽g ${ping} ms 📶*`,
-            contextInfo: {
-                mentionedJid: [sender],
-                forwardingScore: 999,
-                isForwarded: false,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363299692857279@newsletter',
-                    newsletterName: "𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈",
-                    serverMessageId: 143
-                }
-            }
-        }, { quoted: message });
+        // Pakistan Standard Time ke liye Time aur Date format karain
+        const time = new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Karachi', hour12: true, hour: '2-digit', minute: '2-digit' });
+        const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
+        const uptime = runtime(process.uptime());
+
+        const responseText = `*❖ ─── PING RESPONSE ─── ❖*
+
+*⚡️ Latency:* \`\`\`${latency} ms\`\`\`
+*💨 Runtime:* \`\`\`${uptime}\`\`\`
+*📡 Status:* \`\`\`Online\`\`\`
+*⏰ Time:* \`\`\`${time}\`\`\`
+*📅 Date:* \`\`\`${date}\`\`\`
+
+*╰─┈➤ POWERED BY QADEER KHAN*`;
+
+        // Pehly bhejy gaye message ko edit karain
+        await conn.sendMessage(from, { text: responseText, edit: pongMsg.key });
 
     } catch (e) {
         console.error("Ping error:", e);
-        reply(`❌ Error: ${e.message}`);
+        m.reply(`❌ Error: ${e.message}`);
     }
 });
-
