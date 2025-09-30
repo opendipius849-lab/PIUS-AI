@@ -19,9 +19,9 @@ const botNameStyles = [
 let currentStyleIndex = 0;
 
 cmd({
-    pattern: "ping",
-    alias: ["speed", "pong"],
-    use: ".ping",
+    pattern: "ping2",
+    alias: ["speed2", "pong2"],
+    use: ".ping2",
     desc: "Check bot's latency and response speed",
     category: "main",
     react: "🌡️",
@@ -77,7 +77,7 @@ async (conn, mek, m, { from, quoted, sender, reply }) => {
 });
 
 // ping2
-
+/*
 cmd({
     pattern: "ping2",
     alias: ["speed2", "pong2"],
@@ -130,3 +130,4 @@ async (conn, mek, m, { from, sender, reply }) => {
         reply(`❌ Error: ${e.message}`);
     }
 });
+*/
