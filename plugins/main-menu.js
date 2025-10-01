@@ -50,7 +50,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃🜸 menu
 ┃🜸 menu2
 ┃🜸 ping
-┃🜸 speed
+┃🜸 ping2
 ┃🜸 alive
 ┃🜸 alive2
 ┃🜸 setalive
@@ -63,8 +63,8 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 
 ╭✧〈 𝐀𝐈 𝐌𝐄𝐍𝐔 〉
 ┃🜸 ai
+┃🜸 creat-img or imagine
 ┃🜸 aivoice
-┃🜸 deepseek
 ╰────────────๏
 
 ╭✧〈 𝐎𝐖𝐍𝐄𝐑 𝐌𝐄𝐍𝐔 〉
@@ -81,8 +81,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃🜸 unban
 ┃🜸 listban
 ┃🜸 update
-┃🜸 alive
-┃🜸 ping
 ┃🜸 gjid
 ┃🜸 help
 ┃🜸 jid-all
