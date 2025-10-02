@@ -1,31 +1,38 @@
+// group-kick.js
 const { cmd } = require('../command');
 
 cmd({
     pattern: "kick",
     alias: ["remove", "k"],
-    desc: "Instantly remove any member (even admins)",
+    desc: "Instantly remove any member",
     category: "admin",
     react: "🗑️",
     filename: __filename
 },
-async (Void, citel, text) => {
+async (conn, mek, m, { from, isGroup, sender, isOwner, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        if (!citel.isGroup) return citel.reply("❌ This command works only in groups!");
+        if (!isGroup) return reply("❌ This command works only in groups!");
 
-        // Get target user (quoted/mentioned)
-        const target = citel.quoted?.sender || citel.mentionedJid?.[0];
-        if (!target) return citel.reply("❌ Reply to a message or mention a user!");
+        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+        if (!isAdmins && !isGroupCreator && !isOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+        }
+        if (!isBotAdmins) return reply("❌ I need to be an admin to kick members.");
 
-        // Force remove (no admin checks)
-        await Void.groupParticipantsUpdate(citel.chat, [target], "remove");
+        const target = m.quoted?.sender || m.mentionedJid?.[0];
+        if (!target) return reply("❌ Reply to a message or mention a user to kick!");
+        
+        const botId = conn.user.id;
+        if (target === botId) return reply("❌ I cannot kick myself from the group.");
 
-        // Success message
-        await citel.reply(`🚫 @${target.split('@')[0]} has been kicked!`, {
+        await conn.groupParticipantsUpdate(from, [target], "remove");
+
+        await reply(`🚫 @${target.split('@')[0]} has been kicked!`, {
             mentions: [target]
         });
 
     } catch (error) {
         console.error("[KICK ERROR]", error);
-        citel.reply("❌ Failed to kick. Maybe user is a super-admin?");
+        reply("❌ Failed to kick. The user might be the group creator.");
     }
 });

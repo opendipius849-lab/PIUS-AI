@@ -1,3 +1,4 @@
+// group-dismiss.js
 const { cmd } = require('../command');
 
 cmd({
@@ -8,28 +9,26 @@ cmd({
     react: "⬇️",
     filename: __filename
 },
-async(conn, mek, m, {
-    from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isCreator, isDev, isAdmins, reply
-}) => {
-    // Check if the command is used in a group
+async(conn, mek, m, { from, q, isGroup, sender, isOwner, groupMetadata, isBotAdmins, isAdmins, reply }) => {
+    
     if (!isGroup) return reply("❌ This command can only be used in groups.");
 
-    // Check if the user is an admin
-    if (!isAdmins) return reply("❌ Only group admins can use this command.");
-
-    // Check if the bot is an admin
+    const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+    if (!isAdmins && !isGroupCreator && !isOwner) {
+        return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+    }
     if (!isBotAdmins) return reply("❌ I need to be an admin to use this command.");
 
     let number;
     if (m.quoted) {
-        number = m.quoted.sender.split("@")[0]; // If replying to a message, get the sender's number
+        number = m.quoted.sender.split("@")[0];
     } else if (q && q.includes("@")) {
-        number = q.replace(/[@\s]/g, ''); // If manually typing a number
+        number = q.replace(/[@\s]/g, '');
     } else {
         return reply("❌ Please reply to a message or provide a number to demote.");
     }
 
-    // Prevent demoting the bot itself
+    const botNumber = conn.user.id.split(":")[0];
     if (number === botNumber) return reply("❌ The bot cannot demote itself.");
 
     const jid = number + "@s.whatsapp.net";

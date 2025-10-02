@@ -1,3 +1,4 @@
+// group-acceptall.js
 const { cmd } = require('../command');
 
 // Command to list all pending group join requests
@@ -8,37 +9,20 @@ cmd({
     react: "📋",
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        await conn.sendMessage(from, {
-            react: { text: '⏳', key: m.key }
-        });
+        if (!isGroup) return reply("❌ This command can only be used in groups.");
+        
+        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+        if (!isAdmins && !isGroupCreator && !isOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+        }
+        if (!isBotAdmins) return reply("❌ I need to be an admin to view join requests.");
 
-        if (!isGroup) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ This command can only be used in groups.");
-        }
-        if (!isAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ Only group admins can use this command.");
-        }
-        if (!isBotAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ I need to be an admin to view join requests.");
-        }
-
+        await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
         
         if (requests.length === 0) {
-            await conn.sendMessage(from, {
-                react: { text: 'ℹ️', key: m.key }
-            });
             return reply("ℹ️ No pending join requests.");
         }
 
@@ -47,15 +31,9 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             text += `${i+1}. @${user.jid.split('@')[0]}\n`;
         });
 
-        await conn.sendMessage(from, {
-            react: { text: '✅', key: m.key }
-        });
         return reply(text, { mentions: requests.map(u => u.jid) });
     } catch (error) {
         console.error("Request list error:", error);
-        await conn.sendMessage(from, {
-            react: { text: '❌', key: m.key }
-        });
         return reply("❌ Failed to fetch join requests.");
     }
 });
@@ -68,52 +46,29 @@ cmd({
     react: "✅",
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        await conn.sendMessage(from, {
-            react: { text: '⏳', key: m.key }
-        });
+        if (!isGroup) return reply("❌ This command can only be used in groups.");
+        
+        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+        if (!isAdmins && !isGroupCreator && !isOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+        }
+        if (!isBotAdmins) return reply("❌ I need to be an admin to accept join requests.");
 
-        if (!isGroup) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ This command can only be used in groups.");
-        }
-        if (!isAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ Only group admins can use this command.");
-        }
-        if (!isBotAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ I need to be an admin to accept join requests.");
-        }
-
+        await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
         
         if (requests.length === 0) {
-            await conn.sendMessage(from, {
-                react: { text: 'ℹ️', key: m.key }
-            });
             return reply("ℹ️ No pending join requests to accept.");
         }
 
         const jids = requests.map(u => u.jid);
         await conn.groupRequestParticipantsUpdate(from, jids, "approve");
         
-        await conn.sendMessage(from, {
-            react: { text: '👍', key: m.key }
-        });
         return reply(`✅ Successfully accepted ${requests.length} join requests.`);
     } catch (error) {
         console.error("Accept all error:", error);
-        await conn.sendMessage(from, {
-            react: { text: '❌', key: m.key }
-        });
         return reply("❌ Failed to accept join requests.");
     }
 });
@@ -126,52 +81,29 @@ cmd({
     react: "❌",
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        await conn.sendMessage(from, {
-            react: { text: '⏳', key: m.key }
-        });
+        if (!isGroup) return reply("❌ This command can only be used in groups.");
 
-        if (!isGroup) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ This command can only be used in groups.");
+        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+        if (!isAdmins && !isGroupCreator && !isOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
-        if (!isAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ Only group admins can use this command.");
-        }
-        if (!isBotAdmins) {
-            await conn.sendMessage(from, {
-                react: { text: '❌', key: m.key }
-            });
-            return reply("❌ I need to be an admin to reject join requests.");
-        }
+        if (!isBotAdmins) return reply("❌ I need to be an admin to reject join requests.");
 
+        await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
         
         if (requests.length === 0) {
-            await conn.sendMessage(from, {
-                react: { text: 'ℹ️', key: m.key }
-            });
             return reply("ℹ️ No pending join requests to reject.");
         }
 
         const jids = requests.map(u => u.jid);
         await conn.groupRequestParticipantsUpdate(from, jids, "reject");
         
-        await conn.sendMessage(from, {
-            react: { text: '👎', key: m.key }
-        });
         return reply(`✅ Successfully rejected ${requests.length} join requests.`);
     } catch (error) {
         console.error("Reject all error:", error);
-        await conn.sendMessage(from, {
-            react: { text: '❌', key: m.key }
-        });
         return reply("❌ Failed to reject join requests.");
     }
 });

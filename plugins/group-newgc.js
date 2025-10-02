@@ -1,41 +1,38 @@
-const { cmd, commands } = require('../command');
+// group-newgc.js
+const { cmd } = require('../command');
 const config = require('../config');
-const prefix = config.PREFIX;
-const fs = require('fs');
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, sleep, fetchJson } = require('../lib/functions2');
-const { writeFileSync } = require('fs');
-const path = require('path');
 
 cmd({
   pattern: "newgc",
-  category: "group",
+  category: "owner", // Changed to owner for security
   desc: "Create a new group and add participants.",
   filename: __filename,
-}, async (conn, mek, m, { from, isGroup, body, sender, groupMetadata, participants, reply }) => {
+}, async (conn, mek, m, { from, isOwner, q, reply }) => {
   try {
-    if (!body) {
-      return reply(`Usage: !newgc group_name;number1,number2,...`);
+    // Only bot owner can create new groups
+    if (!isOwner) {
+        return reply(`❌ This command is restricted to the bot owner.`);
     }
 
-    const [groupName, numbersString] = body.split(";");
+    if (!q) {
+      return reply(`Usage: ${config.PREFIX}newgc Group Name;number1,number2,...`);
+    }
+
+    const [groupName, numbersString] = q.split(";");
     
     if (!groupName || !numbersString) {
-      return reply(`Usage: !newgc group_name;number1,number2,...`);
+      return reply(`Usage: ${config.PREFIX}newgc Group Name;number1,number2,...`);
     }
 
-    const participantNumbers = numbersString.split(",").map(number => `${number.trim()}@s.whatsapp.net`);
+    const participantJids = numbersString.split(",").map(number => `${number.trim()}@s.whatsapp.net`);
 
-    const group = await conn.groupCreate(groupName, participantNumbers);
-    console.log('created group with id: ' + group.id); // Use group.id here
+    const group = await conn.groupCreate(groupName, participantJids);
+    const inviteLink = await conn.groupInviteCode(group.id);
 
-    const inviteLink = await conn.groupInviteCode(group.id); // Use group.id to get the invite link
+    await conn.sendMessage(group.id, { text: `🎉 Welcome to ${groupName}! The group was created by the Bot.` });
 
-    await conn.sendMessage(group.id, { text: 'hello there' });
-
-    reply(`Group created successfully with invite link: https://chat.whatsapp.com/${inviteLink}\nWelcome message sent.`);
+    reply(`✅ Group created successfully!\nInvite Link: https://chat.whatsapp.com/${inviteLink}`);
   } catch (e) {
-    return reply(`*An error occurred while processing your request.*\n\n_Error:_ ${e.message}`);
+    return reply(`*An error occurred:*\n${e.message}`);
   }
 });
-
-

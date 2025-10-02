@@ -1,6 +1,5 @@
 const config = require('../config')
-const { cmd, commands } = require('../command')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
+const { cmd } = require('../command')
 
 cmd({
     pattern: "lockgc",
@@ -17,7 +16,7 @@ async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, 
         // Check if the user is the group creator
         const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
 
-        // NEW ROBUST CHECK: Allows Group Admin, Group Creator, or Bot Owner
+        // ROBUST CHECK: Allows Group Admin, Group Creator, or Bot Owner
         if (!isAdmins && !isGroupCreator && !isOwner) {
             return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
