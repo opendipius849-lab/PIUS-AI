@@ -1,34 +1,34 @@
-// group-resetlink.js
 const config = require('../config')
 const { cmd } = require('../command')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions')
 
 cmd({
     pattern: "revoke",
-    react: "🖇️",
     alias: ["revokegrouplink", "resetglink", "revokelink"],
-    desc: "To Reset the group link",
+    react: "🖇️",
+    desc: "Reset the group link",
     category: "group",
-    use: '.revoke',
     filename: __filename
-},
-async (conn, mek, m, { from, isGroup, sender, isOwner, groupMetadata, isAdmins, isBotAdmins, reply }) => {
+},           
+async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        if (!isGroup) return reply(`❌ This command only works in groups.`);
-        
-        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
-        if (!isAdmins && !isGroupCreator && !isOwner) {
-            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+        if (!isGroup) return reply("❌ This command only works in groups.");
+
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can reset the link.");
         }
-        if (!isBotAdmins) return reply(`❌ I need to be an admin to reset the group link.`);
+
+        if (!isBotAdmins) return reply("❌ I need to be an admin to reset the group link.");
 
         await conn.groupRevokeInvite(from);
-        await conn.sendMessage(from, {
-            text: `✅ *Group Link has been reset successfully!*`
-        }, { quoted: mek });
+        const newLink = await conn.groupInviteCode(from);
 
-    } catch (err) {
-        console.error(err);
-        reply(`❌ Error resetting group link.`);
+        reply(`✅ Group link has been reset!\n\n🔗 New Link: https://chat.whatsapp.com/${newLink}`);
+    } catch (e) {
+        console.error("Revoke error:", e);
+        reply("❌ Failed to reset the group link.");
     }
 });

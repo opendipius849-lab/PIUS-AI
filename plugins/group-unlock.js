@@ -1,6 +1,5 @@
 const config = require('../config')
-const { cmd, commands } = require('../command')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
+const { cmd } = require('../command')
 
 cmd({
     pattern: "unlockgc",
@@ -10,14 +9,22 @@ cmd({
     category: "group",
     filename: __filename
 },           
-async (conn, mek, m, { from, isGroup, isAdmins, isBotAdmins, reply }) => {
+async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
-        if (!isAdmins) return reply("❌ Only group admins can use this command.");
+
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can unlock the group.");
+        }
+
         if (!isBotAdmins) return reply("❌ I need to be an admin to unlock the group.");
 
         await conn.groupSettingUpdate(from, "unlocked");
-        reply("✅ Group has been unlocked. New members can now join.");
+        reply("✅ Group has been unlocked. New members can join.");
     } catch (e) {
         console.error("Error unlocking group:", e);
         reply("❌ Failed to unlock the group. Please try again.");

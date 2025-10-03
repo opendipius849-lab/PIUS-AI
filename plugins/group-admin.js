@@ -1,5 +1,6 @@
 // group-admin.js
 const { cmd } = require('../command');
+const config = require('../config');
 
 cmd({
     pattern: "admin",
@@ -10,19 +11,21 @@ cmd({
     filename: __filename
 },
 async (conn, mek, m, { from, sender, isBotAdmins, isGroup, isOwner, reply }) => {
-    if (!isGroup) return reply("❌ This command can only be used in groups.");
-    if (!isBotAdmins) return reply("❌ I need to be an admin to perform this action.");
-
-    // Check if the user is the bot owner
-    if (!isOwner) {
-        return reply("❌ This command is restricted to the bot owner only.");
-    }
-
     try {
+        if (!isGroup) return reply("❌ This command can only be used in groups.");
+        if (!isBotAdmins) return reply("❌ I need to be an admin to perform this action.");
+        if (!isOwner) return reply("❌ This command is restricted to the bot owner only.");
+
         const groupMetadata = await conn.groupMetadata(from);
-        const userParticipant = groupMetadata.participants.find(p => p.id === sender);
-        
-        if (userParticipant?.admin) {
+
+        // check fresh participants
+        const participants = groupMetadata.participants || [];
+        const participant = participants.find(p => p.id === sender);
+
+        // fallback if metadata broken
+        const isAdmin = participant?.admin === "admin" || participant?.admin === "superadmin";
+
+        if (isAdmin) {
             return reply("ℹ️ You're already an admin in this group.");
         }
 

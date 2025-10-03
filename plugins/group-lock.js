@@ -13,14 +13,14 @@ async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, 
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
 
-        // Check if the user is the group creator
-        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
 
-        // ROBUST CHECK: Allows Group Admin, Group Creator, or Bot Owner
-        if (!isAdmins && !isGroupCreator && !isOwner) {
-            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can lock the group.");
         }
-        
+
         if (!isBotAdmins) return reply("❌ I need to be an admin to lock the group.");
 
         await conn.groupSettingUpdate(from, "locked");

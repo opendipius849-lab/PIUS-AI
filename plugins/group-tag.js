@@ -1,6 +1,5 @@
 const { cmd } = require('../command');
 
-
 cmd({
   pattern: "hidetag",
   alias: ["tag", "h"],  
@@ -11,7 +10,7 @@ cmd({
   filename: __filename
 },
 async (conn, mek, m, {
-  from, q, isGroup, isCreator, isAdmins,
+  from, q, isGroup, isAdmins, isOwner, sender, groupMetadata,
   participants, reply
 }) => {
   try {
@@ -20,7 +19,14 @@ async (conn, mek, m, {
     };
 
     if (!isGroup) return reply("❌ This command can only be used in groups.");
-    if (!isAdmins && !isCreator) return reply("❌ Only group admins can use this command.");
+
+    // ✅ Group creator check
+    const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
+
+    // ✅ Permission check (Admins OR Group Creator OR Bot Owner)
+    if (!isAdmins && !isGroupCreator && !isOwner) {
+      return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
+    }
 
     const mentionAll = { mentions: participants.map(u => u.id) };
 
@@ -33,7 +39,6 @@ async (conn, mek, m, {
     if (m.quoted) {
       const type = m.quoted.mtype || '';
       
-      // If it's a text message (extendedTextMessage)
       if (type === 'extendedTextMessage') {
         return await conn.sendMessage(from, {
           text: m.quoted.text || 'No message content found.',
@@ -41,7 +46,6 @@ async (conn, mek, m, {
         }, { quoted: mek });
       }
 
-      // Handle media messages
       if (['imageMessage', 'videoMessage', 'audioMessage', 'stickerMessage', 'documentMessage'].includes(type)) {
         try {
           const buffer = await m.quoted.download?.();
@@ -91,16 +95,13 @@ async (conn, mek, m, {
         }
       }
 
-      // Fallback for any other message type
       return await conn.sendMessage(from, {
         text: m.quoted.text || "📨 Message",
         ...mentionAll
       }, { quoted: mek });
     }
 
-    // If no quoted message, but a direct message is sent
     if (q) {
-      // If the direct message is a URL, send it as a message
       if (isUrl(q)) {
         return await conn.sendMessage(from, {
           text: q,
@@ -108,9 +109,8 @@ async (conn, mek, m, {
         }, { quoted: mek });
       }
 
-      // Otherwise, just send the text without the command name
       await conn.sendMessage(from, {
-        text: q, // Sends the message without the command name
+        text: q,
         ...mentionAll
       }, { quoted: mek });
     }

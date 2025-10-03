@@ -1,5 +1,6 @@
 // group-acceptall.js
 const { cmd } = require('../command');
+const config = require('../config');
 
 // Command to list all pending group join requests
 cmd({
@@ -12,16 +13,19 @@ cmd({
 async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
-        
-        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
-        if (!isAdmins && !isGroupCreator && !isOwner) {
+
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
             return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
         if (!isBotAdmins) return reply("❌ I need to be an admin to view join requests.");
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
-        
+
         if (requests.length === 0) {
             return reply("ℹ️ No pending join requests.");
         }
@@ -49,23 +53,26 @@ cmd({
 async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
-        
-        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
-        if (!isAdmins && !isGroupCreator && !isOwner) {
+
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
             return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
         if (!isBotAdmins) return reply("❌ I need to be an admin to accept join requests.");
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
-        
+
         if (requests.length === 0) {
             return reply("ℹ️ No pending join requests to accept.");
         }
 
         const jids = requests.map(u => u.jid);
         await conn.groupRequestParticipantsUpdate(from, jids, "approve");
-        
+
         return reply(`✅ Successfully accepted ${requests.length} join requests.`);
     } catch (error) {
         console.error("Accept all error:", error);
@@ -85,22 +92,25 @@ async (conn, mek, m, { from, isGroup, isOwner, sender, groupMetadata, isAdmins, 
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
 
-        const isGroupCreator = groupMetadata.owner && groupMetadata.owner === sender;
-        if (!isAdmins && !isGroupCreator && !isOwner) {
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
             return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
         if (!isBotAdmins) return reply("❌ I need to be an admin to reject join requests.");
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
         const requests = await conn.groupRequestParticipantsList(from);
-        
+
         if (requests.length === 0) {
             return reply("ℹ️ No pending join requests to reject.");
         }
 
         const jids = requests.map(u => u.jid);
         await conn.groupRequestParticipantsUpdate(from, jids, "reject");
-        
+
         return reply(`✅ Successfully rejected ${requests.length} join requests.`);
     } catch (error) {
         console.error("Reject all error:", error);

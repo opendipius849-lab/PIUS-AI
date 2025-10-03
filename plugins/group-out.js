@@ -1,51 +1,44 @@
-const { cmd } = require('../command');
+const config = require('../config')
+const { cmd } = require('../command')
 
 cmd({
     pattern: "out",
-    alias: ["ck", "🦶"],
-    desc: "Removes all members with specific country code from the group",
+    alias: ["ck"],
+    desc: "Remove members with a specific country code",
     category: "admin",
     react: "❌",
     filename: __filename
-},
-async (conn, mek, m, {
-    from, q, isGroup, isBotAdmins, reply, groupMetadata, isCreator
-}) => {
-    // Check if the command is used in a group
-    if (!isGroup) return reply("❌ This command can only be used in groups.");
-
-    // Check if the user is the bot owner/creator
-    if (!isCreator) {
-        return reply("❌ Only the bot owner can use this command.");
-    }
-
-    // Check if the bot is an admin
-    if (!isBotAdmins) return reply("❌ I need to be an admin to use this command.");
-
-    if (!q) return reply("❌ Please provide a country code. Example: .out 92");
-
-    const countryCode = q.trim();
-    if (!/^\d+$/.test(countryCode)) {
-        return reply("❌ Invalid country code. Please provide only numbers (e.g., 92 for +92 numbers)");
-    }
-
+},           
+async (conn, mek, m, { from, q, isGroup, isOwner, sender, groupMetadata, isAdmins, isBotAdmins, reply }) => {
     try {
-        const participants = await groupMetadata.participants;
-        const targets = participants.filter(
-            participant => participant.id.startsWith(countryCode) && 
-                         !participant.admin // Don't remove admins
-        );
+        if (!isGroup) return reply("❌ This command can only be used in groups.");
 
-        if (targets.length === 0) {
-            return reply(`❌ No members found with country code +${countryCode}`);
+        const botOwnerJid = config.OWNER_NUMBER.replace('+','') + "@s.whatsapp.net";
+        const isBotOwner = sender === botOwnerJid || isOwner;
+        const isGroupCreator = groupMetadata?.owner === sender;
+
+        if (!isAdmins && !isGroupCreator && !isBotOwner) {
+            return reply("❌ Only group admins, the group creator, or the bot owner can use this command.");
         }
+
+        if (!isBotAdmins) return reply("❌ I need to be an admin to remove members.");
+
+        if (!q) return reply("❌ Please provide a country code. Example: .out 92");
+
+        const countryCode = q.trim();
+        if (!/^\d+$/.test(countryCode)) return reply("❌ Invalid country code.");
+
+        const participants = groupMetadata.participants;
+        const targets = participants.filter(p => p.id.startsWith(countryCode) && !p.admin);
+
+        if (!targets.length) return reply(`❌ No members found with code +${countryCode}`);
 
         const jids = targets.map(p => p.id);
         await conn.groupParticipantsUpdate(from, jids, "remove");
-        
-        reply(`✅ Successfully removed ${targets.length} members with country code +${countryCode}`);
-    } catch (error) {
-        console.error("Out command error:", error);
-        reply("❌ Failed to remove members. Error: " + error.message);
+
+        reply(`✅ Removed ${targets.length} members with code +${countryCode}`);
+    } catch (e) {
+        console.error("Out error:", e);
+        reply("❌ Failed to remove members.");
     }
 });
