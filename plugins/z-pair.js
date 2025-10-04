@@ -7,7 +7,7 @@ cmd({
     react: "✅",
     desc: "Get pairing code for 𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈 🤖",
     category: "main",
-    use: ".pair 923xxxxxxx",
+    use: ".pair",
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
