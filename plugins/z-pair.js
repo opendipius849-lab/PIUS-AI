@@ -11,7 +11,7 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
-        // Extract phone number from command
+        // Extract phone number from command, or use the sender's number if no number is provided
         const phoneNumber = q ? q.trim().replace(/[^0-9]/g, '') : senderNumber.replace(/[^0-9]/g, '');
 
         // Validate phone number format
@@ -19,9 +19,11 @@ cmd({
             return await reply("❌ Please provide a valid phone number without `+`\nExample: `.pair 923xxxxxxx`");
         }
 
-        // Make API request to get pairing code
-        const response = await axios.get(`https://lite-session-5q7b.onrender.com/code?number=${encodeURIComponent(phoneNumber)}`);
+        // Make API request to the correct endpoint to get pairing code
+        // The endpoint was changed from /code to /get-code
+        const response = await axios.get(`https://lite-session-5q7b.onrender.com/get-code?number=${encodeURIComponent(phoneNumber)}`);
 
+        // Check if the response contains the code
         if (!response.data || !response.data.code) {
             return await reply("❌ Failed to retrieve pairing code. Please try again later.");
         }
@@ -35,11 +37,11 @@ cmd({
         // Optional 2-second delay
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Send clean code again
+        // Send the clean code again for easy copying
         await reply(`${pairingCode}`);
 
     } catch (error) {
         console.error("Pair command error:", error);
-        await reply("❌ An error occurred while getting pairing code. Please try again later.");
+        await reply("❌ An error occurred while trying to get the pairing code. Please check the logs.");
     }
 });
