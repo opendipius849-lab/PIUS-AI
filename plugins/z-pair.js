@@ -11,27 +11,31 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
-        // Extract phone number from command, or use the sender's number if no number is provided
-        const phoneNumber = q ? q.trim().replace(/[^0-9]/g, '') : senderNumber.replace(/[^0-9]/g, '');
-
-        // Validate phone number format
-        if (!phoneNumber || phoneNumber.length < 10 || phoneNumber.length > 15) {
-            return await reply("❌ Please provide a valid phone number without `+`\nExample: `.pair 923xxxxxxx`");
+        // Step 1: Check if a phone number was provided after the command
+        if (!q) {
+            return await reply("❌ Please provide a phone number with country code.\n*Example:* `.pair 923xxxxxxx`");
         }
 
-        // Make API request to the correct endpoint to get pairing code
-        // The endpoint was changed from /code to /get-code
+        // Step 2: Extract and clean the phone number from the arguments
+        const phoneNumber = q.trim().replace(/[^0-9]/g, '');
+
+        // Step 3: Validate the cleaned phone number's format and length
+        if (!phoneNumber || phoneNumber.length < 10 || phoneNumber.length > 15) {
+            return await reply("❌ The phone number you provided is invalid. Please enter a valid number with the country code, without the `+` sign.\n*Example:* `.pair 923xxxxxxx`");
+        }
+
+        // Make API request to get pairing code
         const response = await axios.get(`https://lite-session-5q7b.onrender.com/get-code?number=${encodeURIComponent(phoneNumber)}`);
 
-        // Check if the response contains the code
+        // Check if the response from the API is valid
         if (!response.data || !response.data.code) {
-            return await reply("❌ Failed to retrieve pairing code. Please try again later.");
+            return await reply("❌ Failed to retrieve pairing code. The service might be down. Please try again later.");
         }
 
         const pairingCode = response.data.code;
         const doneMessage = "> *𝐐𝐀𝐃𝐄𝐄𝐑-𝐀𝐈 PAIRING COMPLETED*";
 
-        // Send initial message with formatting
+        // Send initial message with the pairing code
         await reply(`${doneMessage}\n\n*Your pairing code is:* ${pairingCode}`);
 
         // Optional 2-second delay
@@ -42,6 +46,6 @@ cmd({
 
     } catch (error) {
         console.error("Pair command error:", error);
-        await reply("❌ An error occurred while trying to get the pairing code. Please check the logs.");
+        await reply("❌ An error occurred while trying to get the pairing code. Please check the server logs for more details.");
     }
 });
