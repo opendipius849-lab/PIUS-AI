@@ -1,7 +1,7 @@
 {
   "name": "QADEER-AI",
   "description": "Simple WhatsApp bot made by Qadeer Khan",
-  "logo": "https://qu.ax/Pusls.jpg",
+  "logo": "https://files.catbox.moe/3tihge.jpg",
   "keywords": ["QADEER-AI"],
   "success_url": "/",
 
@@ -28,7 +28,7 @@
     "MODE": {
       "description": "select your bot work type public-private-inbox-group.",
       "required": false,
-      "value": "public"
+      "value": "private"
       
     },
 
@@ -66,7 +66,7 @@
     "AUTO_STATUS_REACT": {
       "description": "make it true for automatic status reaction or like.",
       "required": true,
-      "value": "true"
+      "value": "false"
     }, 
 
     "AUTO_STATUS_REPLY": {
@@ -85,13 +85,13 @@
     "OWNER_NAME": {
       "description": "Type Bot Owner Name.",
       "required": false,
-      "value": "*Qadeer Khan*"
+      "value": "Qadeer Khan"
 }, 
 
     "OWNER_NUMBER": {
       "description": "put the owner number for bot.",
       "required": false,
-      "value": "923xxxxxxx"
+      "value": "923151195391"
 
     }, 
 
@@ -105,7 +105,7 @@
     "ANTI_LINK": {
       "description": "Make it true if you want bot auto remove group link.",
       "required": true,
-      "value": "true"
+      "value": "false"
       
     },
 
@@ -131,13 +131,13 @@
     "MENU_IMAGE_URL": {
       "description": "add url for mention reply and menu if want.",
       "required": false,
-      "value": "https://qu.ax/Pusls.jpg"
+      "value": "https://files.catbox.moe/3tihge.jpg"
     },
     
      "DESCRIPTION": {
       "description": "add caption for menu and other",
       "required": false,
-      "value": "*© https://qu.ax/Pusls.jpg*"
+      "value": "*© 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽*"
     },
 
       "DELETE_LINKS": {
@@ -192,7 +192,7 @@
     "WELCOME": {
       "description": "make it true if want goodbye and welcome message in groups.",
       "required": false,
-      "value": "true"
+      "value": "false"
     },
 
     "READ_MESSAGE": {
