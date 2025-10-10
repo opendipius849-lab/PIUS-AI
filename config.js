@@ -52,7 +52,7 @@ OWNER_NAME: process.env.OWNER_NAME || "Qadeer Khan",
 // add bot owner name
 DESCRIPTION: process.env.DESCRIPTION || "*© 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝚀𝙰𝙳𝙴𝙴𝚁 𝙺𝙷𝙰𝙽*",
 // bot description    
-ALIVE_IMG: process.env.ALIVE_IMG || "https://qu.ax/Pusls.jpg",
+ALIVE_IMG: process.env.ALIVE_IMG || "https://files.catbox.moe/xe1ptm.jpg",
 // image for alive msg
 LIVE_MSG: process.env.LIVE_MSG || "> *QADEER-AI RUNNING WITH SPEED OF LIGHT*⚡",
 // alive msg content
